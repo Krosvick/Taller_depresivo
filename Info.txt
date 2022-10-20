@@ -1,5 +1,6 @@
 ** Bibliografia ** 
 https://www.sciencedirect.com/science/article/pii/S0010440X18301603
 
-** Diagramas **
+** Herramientas **
+https://www.youtube.com/watch?v=Cz3WcZLRaWc
 https://drawsql.app/diagrams
