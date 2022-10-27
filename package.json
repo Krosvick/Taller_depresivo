@@ -1,0 +1,23 @@
+{
+  "name": "taller_depresivo",
+  "version": "1.0.0",
+  "description": "Primer Taller del ramo Fundamentos de programación",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Krosvick/Taller_depresivo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Krosvick/Taller_depresivo/issues"
+  },
+  "homepage": "https://github.com/Krosvick/Taller_depresivo#readme",
+  "dependencies": {
+    "chalk": "^5.1.2"
+  }
+}
