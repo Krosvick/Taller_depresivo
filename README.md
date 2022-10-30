@@ -11,7 +11,7 @@ Un requisito previo es tener una version de nodejs
 previamente instalada, puede elegir la correspondiente
 a su sistema operativo en:
 
-https://nodejs.org/en/download/
+[Node Download Section](https://nodejs.org/en/download/)
 
 Clonar el repositorio  
 
