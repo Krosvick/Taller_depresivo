@@ -13,16 +13,23 @@ a su sistema operativo en:
 
 [Node Download Section](https://nodejs.org/en/download/)
 
+Alternativamente puedes verificar si cuentas con una version
+de node instalada utilizando el siguiente comando:
+
+~~~bash  
+node --v
+~~~
+
 Clonar el repositorio  
 
 ~~~bash  
-  git clone https://github.com/Krosvick/Taller_depresivo
+git clone https://github.com/Krosvick/Taller_depresivo
 ~~~
 
 Navegar al directorio del repositorio 
 
 ~~~bash  
-  cd my-project
+cd my-project
 ~~~
 
 Instalar dependencias  
