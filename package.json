@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/Krosvick/Taller_depresivo#readme",
   "dependencies": {
-    "chalk": "^5.1.2"
+    "chalk": "^5.1.2",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
