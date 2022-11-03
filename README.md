@@ -29,7 +29,7 @@ git clone https://github.com/Krosvick/Taller_depresivo
 Navegar al directorio del repositorio 
 
 ~~~bash  
-cd my-project
+cd Taller_depresivo
 ~~~
 
 Instalar dependencias  
