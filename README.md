@@ -52,7 +52,7 @@ En linux
 
 Para acceder al dashboard de pocketbase, ingrese al siguiente enlace con su cuenta de administrador:
 
-[pocketbase local](127.0.0.1:8090/_)
+[pocketbase local](http://127.0.0.1:8090/_/)
 
 ## Licencia
 
