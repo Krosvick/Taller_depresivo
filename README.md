@@ -5,6 +5,9 @@ usuario demuestra cierto grado de depresión.
 
 Ademas el proyecto contara con una base de datos y
 un sistema CRUD por consola para los administradores
+## Informe del proyecto
+
+[Link al informe](https://universidadarturoprat230-my.sharepoint.com/:w:/g/personal/fvirgilio_estudiantesunap_cl/Ef3v6LOrwWBPhS_KgbiwHLMBq8mVK0SEnSri9b31jgvAvw?e=aFVIlV)
 ## Correr de manera local
 
 Un requisito previo es tener una version de nodejs
