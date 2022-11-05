@@ -37,6 +37,22 @@ Instalar dependencias
 ~~~bash  
 npm install
 ~~~
+## Ejecutar el servidor de pocketbase
+
+En windows 
+
+~~~bash
+./pocketbase.exe serve 
+~~~
+
+En linux
+~~~bash
+./pocketbase serve
+~~~
+
+Para acceder al dashboard de pocketbase, ingrese al siguiente enlace con su cuenta de administrador:
+
+[pocketbase local](127.0.0.1:8090/_)
 
 ## Licencia
 
