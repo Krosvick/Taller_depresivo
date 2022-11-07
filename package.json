@@ -23,7 +23,7 @@
     "cross-fetch": "^3.1.5",
     "eventsource": "^2.0.2",
     "mysql": "^2.18.1",
-    "pocketbase": "^0.7.4"
+    "pocketbase": "^0.8.0-rc2"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
