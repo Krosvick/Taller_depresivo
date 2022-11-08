@@ -93,46 +93,44 @@ function manejarUsuarios(){
 async function agregarUsuario(){
   console.clear();
   console.log("Para ingresar un usuario se requiere de los siguientes campos");
-  console.log("Nombres, apellido paterno, apellido materno, correo, contraseña y rol");
-  console.log("Ingrese los datos del usuario");
-  let nombre = prompts("Nombre: ");
-  let apellidoPaterno = prompts("Apellido paterno: ");
-  let apellidoMaterno = prompts("Apellido materno: ");
-  let correo;
+  console.log("Nombres, apellido paterno, apellido materno, correo, contraseña, genero");
+  console.log("Adicionalmente existen los siguientes campos opcionales");
+  console.log("run, digito verificador, fecha de nacimiento, telefono y observaciones");
+  console.log("Si no desea ingresar alguno de los campos opcionales, solo presione enter");
+  let nombres = prompts("Ingrese los nombres: ");
+  let apellidoPaterno = prompts("Ingrese el apellido paterno: ");
+  let apellidoMaterno = prompts("Ingrese el apellido materno: ");
   while(true){
-    correo = prompts("Correo: ");
-    if (validateEmail(correo)) {
+    let correo = prompts("Ingrese el correo: ");
+    if(validateEmail(correo)){
       break;
-    } else {
+    }else{
       console.log("Correo invalido");
     }
-  } 
-  let contraseña;
+  }
   while(true){
-    contraseña = prompts("Contraseña: ");
-    if (contraseña.length >= 6) {
+    let contraseña = prompts("Ingrese la contraseña: ");
+    if(validatePassword(contraseña)){
       break;
-    } else {
-      console.log("La contraseña debe tener al menos 6 caracteres");
+    }
+    else{
+      console.log("Contraseña invalida");
     }
   }
-  let rol;
+  let selectables = ["Masculino", "Femenino", "No-binario", "Prefiero no responder"];
   while(true){
-    let rol = prompts("Rol: ");
-    if (rol == "Patient" || rol == "Professional") {
+    console.log("Ingrese su genero");
+    console.log("1) Masculino");
+    console.log("2) Femenino");
+    console.log("3) No-binario");
+    console.log("4) Prefiero no responder");
+    let genero = prompts("Ingrese una opcion: ");
+    if(genero == "1" || genero == "2" || genero == "3" || genero == "4"){
+      genero = selectables[parseInt(genero)-1];
       break;
-    } else {
-      console.log("El rol debe ser Patient o Professional");
-    }
+    }else{
+      console.log("Opcion invalida");
+    } 
   }
-  const user = await client.users.create({
-    names: nombre,
-    last_Name: apellidoPaterno,
-    mother_last_name: apellidoMaterno,
-    email: correo,
-    password: contraseña,
-    passwordConfirm: contraseña,
-    role: rol
-  });
-  console.log(user);
 }
+
