@@ -2,7 +2,10 @@ function validateEmail(email) {
   const re = /\S+@\S+\.\S+/;
   return re.test(email);
 }
-
+function validatePassword(password) {
+    const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return re.test(password);
+}
 async function loginUsuario(){
   console.log("Ingrese su correo electronico"); 
   var email = prompts("Correo: ");
