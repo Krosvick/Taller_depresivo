@@ -163,9 +163,10 @@ async function agregarUsuario(){
     "birthDate": fechaNacimiento,
     "telephone": telefono,
     "observation" : observaciones
-
-
-
   } 
+  const record = await client.collection('users').create(userData);
 }
-
+async function verTodosLosUsuarios(){
+  const resultList = await client.collection('users').getList(1,50);
+  console.log(resultList);
+}
