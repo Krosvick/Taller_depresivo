@@ -17,17 +17,3 @@ async function loginUsuario(){
     return false;
   }
 }
-async function loginAdmin() {
-  console.log("Ingrese su correo electronico");
-  var email = prompts("Correo: ");
-  console.log("Ingrese su contraseña");
-  var password = prompts("Contraseña: ");
-  try{
-    const adminData = await client.admins.authViaEmail(email, password);
-    console.clear();
-    console.log("Bienvenido " + adminData.admin.id);
-  } catch (error) {
-    console.log("Error");
-  }
-  menuAdmin();
-};
