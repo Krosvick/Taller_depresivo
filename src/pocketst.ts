@@ -1,29 +1,59 @@
 const PocketBase = require('pocketbase/cjs');
 const prompts = require('prompt-sync')();
 const client = new PocketBase('http://127.0.0.1:8090');
-
-async function getAllRecords() {
+//Referencia
+/*async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
   const records = await client.records.getOne("preguntas", "hdtljd8anagvn6e" );
   console.log(records.contenido);
+}*/
+
+function validateEmail(email) {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(email);
 }
 async function agregarUsuario(){
   console.clear();
   console.log("Para ingresar un usuario se requiere de los siguientes campos");
   console.log("Nombres, apellido paterno, apellido materno, correo, contraseña y rol");
   console.log("Ingrese los datos del usuario");
-  let nombre = prompts("Nombres: ");
+  let nombre = prompts("Nombre: ");
   let apellidoPaterno = prompts("Apellido paterno: ");
   let apellidoMaterno = prompts("Apellido materno: ");
-  let correo = prompts("Correo: ");
-  let contrasena = prompts("Contraseña: ");
-  let rol = prompts("Rol: ");
+  let correo;
+  while(true){
+    correo = prompts("Correo: ");
+    if (validateEmail(correo)) {
+      break;
+    } else {
+      console.log("Correo invalido");
+    }
+  } 
+  let contraseña;
+  while(true){
+    contraseña = prompts("Contraseña: ");
+    if (contraseña.length >= 6) {
+      break;
+    } else {
+      console.log("La contraseña debe tener al menos 6 caracteres");
+    }
+  }
+  let rol;
+  while(true){
+    let rol = prompts("Rol: ");
+    if (rol == "Patient" || rol == "Professional") {
+      break;
+    } else {
+      console.log("El rol debe ser Patient o Professional");
+    }
+  }
   const user = await client.users.create({
     names: nombre,
     last_Name: apellidoPaterno,
     mother_last_name: apellidoMaterno,
     email: correo,
-    password: contrasena,
+    password: contraseña,
+    passwordConfirm: contraseña,
     role: rol
   });
   console.log(user);
@@ -111,7 +141,6 @@ function menuPsicologo(){
   console.log("1) ") 
 }
 function menuAdmin(){
-  console.clear();
   console.log("1) Agregar Usuario"); 
   console.log("2) Eliminar Usuario");
   let opcion = prompts("Ingrese una opcion: ");
