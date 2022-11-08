@@ -9,6 +9,87 @@ const client = new PocketBase('http://127.0.0.1:8090');
 }*/
 
 
+
+function menuPsicologo(){
+  console.clear();
+  console.log("1) Ver tests"); 
+  console.log("2) ver encuestas realizadas");
+  console.log("3) Manejar usuarios");
+  console.log("4) Salir");
+  var opcion = prompts("Ingrese una opcion: ");
+  switch(opcion){
+    case "1":
+      //verTests();
+      break;
+    case "2":
+      //verEncuestasRealizadas();
+      break;
+    case "3":
+      //manejarUsuarios();
+      break;
+    case "4":
+      console.log("Gracias por usar el sistema de encuestas");
+      break;
+    default:
+      console.log("Opcion invalida");
+      menuPsicologo();
+      break;
+  };
+}
+
+function verTests(){
+  console.clear();
+  console.log("1) Ver todos los tests");
+  console.log("2) Agregar un test");
+  console.log("3) Eliminar un test");
+  console.log("4) Salir");
+  var opcion = prompts("Ingrese una opcion: ");
+  switch(opcion){
+    case "1":
+      //verTodosLosTests();
+      break;
+    case "2":
+      //agregarTest();
+      break;
+    case "3":
+      //eliminarTest();
+      break;
+    case "4":
+      menuPsicologo();
+      break;
+    default:
+      console.log("Opcion invalida");
+      verTests();
+      break;
+  };
+}
+function manejarUsuarios(){
+  console.clear();
+  console.log("1) Ver todos los usuarios");
+  console.log("2) Agregar un usuario");
+  console.log("3) Eliminar un usuario");
+  console.log("4) Salir");
+  var opcion = prompts("Ingrese una opcion: ");
+  switch(opcion){
+    case "1":
+      //verTodosLosUsuarios();
+      break;
+    case "2":
+      agregarUsuario();
+      break;
+    case "3":
+      //eliminarUsuario();
+      break;
+    case "4":
+      menuPsicologo();
+      break;
+    default:
+      console.log("Opcion invalida");
+      manejarUsuarios();
+      break;
+  };
+}
+
 async function agregarUsuario(){
   console.clear();
   console.log("Para ingresar un usuario se requiere de los siguientes campos");
@@ -55,32 +136,3 @@ async function agregarUsuario(){
   });
   console.log(user);
 }
-
-function menuPsicologo(){
-  console.clear();
-  console.log("1) Ver tests"); 
-  console.log("2) ver encuestas realizadas");
-  console.log("3) Manejar usuarios");
-  console.log("4) Salir");
-  var opcion = prompts("Ingrese una opcion: ");
-  switch(opcion){
-    case "1":
-      //verTests();
-      break;
-    case "2":
-      //verEncuestasRealizadas();
-      break;
-    case "3":
-      //manejarUsuarios();
-      break;
-    case "4":
-      console.log("Gracias por usar el sistema de encuestas");
-      break;
-    default:
-      console.log("Opcion invalida");
-      menuPsicologo();
-      break;
-  };
-}
-
-
