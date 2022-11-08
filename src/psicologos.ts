@@ -100,8 +100,12 @@ async function agregarUsuario(){
   let nombres = prompts("Ingrese los nombres: ");
   let apellidoPaterno = prompts("Ingrese el apellido paterno: ");
   let apellidoMaterno = prompts("Ingrese el apellido materno: ");
+  let correo;
+  let contraseña;
+  let genero;
+  let run;
   while(true){
-    let correo = prompts("Ingrese el correo: ");
+    correo = prompts("Ingrese el correo: ");
     if(validateEmail(correo)){
       break;
     }else{
@@ -109,7 +113,7 @@ async function agregarUsuario(){
     }
   }
   while(true){
-    let contraseña = prompts("Ingrese la contraseña: ");
+    contraseña = prompts("Ingrese la contraseña: ");
     if(validatePassword(contraseña)){
       break;
     }
@@ -124,7 +128,7 @@ async function agregarUsuario(){
     console.log("2) Femenino");
     console.log("3) No-binario");
     console.log("4) Prefiero no responder");
-    let genero = prompts("Ingrese una opcion: ");
+    genero = prompts("Ingrese una opcion: ");
     if(genero == "1" || genero == "2" || genero == "3" || genero == "4"){
       genero = selectables[parseInt(genero)-1];
       break;
@@ -132,5 +136,36 @@ async function agregarUsuario(){
       console.log("Opcion invalida");
     } 
   }
+  while(true){
+    run = prompts("Ingrese el run: ");
+    if(validateRun(run)){
+      break;
+    }else{
+      console.log("Run invalido");
+    }
+  }
+  let fechaNacimiento = birthDateGetter(); 
+  let digitoVerificador = calculateDv(run);
+  let telefono = prompts("Ingrese el telefono: ");
+  let observaciones = prompts("Ingrese las observaciones: ");
+  const userData = {
+    "username": usernameCreator(nombres, apellidoPaterno),
+    "email": correo,
+    "emailVisible": true,
+    "password": contraseña,
+    "passwordConfirm": contraseña,
+    "names": nombres,
+    "lastName": apellidoPaterno,
+    "secondLastName": apellidoMaterno,
+    "run": run,
+    "dv": digitoVerificador,
+    "gender": genero,
+    "birthDate": fechaNacimiento,
+    "telephone": telefono,
+    "observation" : observaciones
+
+
+
+  } 
 }
 
