@@ -1,3 +1,5 @@
+import { type } from "os";
+
 function init(){
   console.clear();
   console.log("Bienvenido al sistema de encuestas");
@@ -20,4 +22,10 @@ function init(){
       break;
   }
 
+}
+let num:number = prompts("Ingrese un numero: ");
+if (typeof num == "number"){
+  console.log("Es un numero");
+}else{
+  console.log("No es un numero");
 }

@@ -103,7 +103,7 @@ async function agregarUsuario(){
   let correo;
   let contraseña;
   let genero;
-  let run;
+  let run:number;
   while(true){
     correo = prompts("Ingrese el correo: ");
     if(validateEmail(correo)){
@@ -167,6 +167,26 @@ async function agregarUsuario(){
   const record = await client.collection('users').create(userData);
 }
 async function verTodosLosUsuarios(){
-  const resultList = await client.collection('users').getList(1,50);
-  console.log(resultList);
+  console.clear();
+  console.log("Cargando los primeros 5 usuarios");
+  const resultList = await client.collection('users').getList(1,5);
+  for(let i = 0; i < resultList.length; i++){
+    console.log(resultList[i].names + " " + resultList[i].lastName + " " + resultList[i].secondLastName + " "+ 
+    resultList[i].username);
+  }
+  console.log("1) Ver mas usuarios");
+  console.log("2) Salir");
+  var opcion = prompts("Ingrese una opcion: ");
+  switch(opcion){
+    case "1":
+      //verMasUsuarios();
+      break;
+    case "2":
+      manejarUsuarios();
+      break;
+    default:
+      console.log("Opcion invalida");
+      verTodosLosUsuarios();
+      break;
+  };
 }
