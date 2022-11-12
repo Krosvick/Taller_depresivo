@@ -1,5 +1,4 @@
-import { type } from "os";
-
+import {prompts} from "./psicologos";
 function init(){
   console.clear();
   console.log("Bienvenido al sistema de encuestas");

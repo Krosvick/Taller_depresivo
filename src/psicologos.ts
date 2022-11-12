@@ -1,6 +1,4 @@
-const PocketBase = require('pocketbase/cjs');
-const prompts = require('prompt-sync')();
-const client = new PocketBase('http://127.0.0.1:8090');
+import {prompts, validatePassword, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun} from "./utility"
 //Referencia
 /*async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
