@@ -101,7 +101,7 @@ async function agregarUsuario(){
   let correo;
   let contraseña;
   let genero;
-  let run:number;
+  let run;
   while(true){
     correo = prompts("Ingrese el correo: ");
     if(validateEmail(correo)){
@@ -155,7 +155,7 @@ async function agregarUsuario(){
     "names": nombres,
     "lastName": apellidoPaterno,
     "secondLastName": apellidoMaterno,
-    "run": run,
+    "run": Number(run),
     "dv": digitoVerificador,
     "gender": genero,
     "birthDate": fechaNacimiento,

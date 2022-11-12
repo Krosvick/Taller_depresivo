@@ -16,10 +16,9 @@ function usernameCreator(name, lastname){
     let username = name.substring(0, 3) + lastname.substring(0, 3) + Math.floor(Math.random() * 1000);
     return username; 
 }
-function validateRun(run:number) {
-    let runString = run.toString();
+function validateRun(run: string) {
     const re = /^\d{7,8}$/;
-    return re.test(runString);
+    return re.test(run);
 }
 function calculateDv(run) {
   let sum = 0;
