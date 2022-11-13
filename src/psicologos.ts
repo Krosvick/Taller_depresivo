@@ -8,7 +8,7 @@ import {prompts, validatePassword, validateEmail, client, birthDateGetter, calcu
 
 
 
-function menuPsicologo(){
+export function menuPsicologo(){
   console.clear();
   console.log("1) Ver tests"); 
   console.log("2) ver encuestas realizadas");
@@ -23,10 +23,11 @@ function menuPsicologo(){
       //verEncuestasRealizadas();
       break;
     case "3":
-      //manejarUsuarios();
+      manejarUsuarios();
       break;
     case "4":
       console.log("Gracias por usar el sistema de encuestas");
+      client.authStore.clear();
       break;
     default:
       console.log("Opcion invalida");
@@ -162,16 +163,22 @@ async function agregarUsuario(){
     "telephone": telefono,
     "observation" : observaciones
   } 
-  const record = await client.collection('users').create(userData);
+  try{
+    const record = await client.collection('users').create(userData);
+    console.log("Usuario creado exitosamente");
+  }catch(error){
+    console.log(error);
+  }
+  manejarUsuarios();
 }
 async function verTodosLosUsuarios(){
   console.clear();
   console.log("Cargando los primeros 5 usuarios");
   const resultList = await client.collection('users').getList(1,5);
-  for(let i = 0; i < resultList.length; i++){
+  /*for(let i = 0; i < resultList.length; i++){
     console.log(resultList[i].names + " " + resultList[i].lastName + " " + resultList[i].secondLastName + " "+ 
     resultList[i].username);
-  }
+  }*/
   console.log("1) Ver mas usuarios");
   console.log("2) Salir");
   var opcion = prompts("Ingrese una opcion: ");
