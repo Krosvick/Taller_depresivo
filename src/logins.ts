@@ -1,17 +1,19 @@
 import {prompts, client} from "./utility";
+import { menuPsicologo } from "./psicologos";
 
 
-async function loginUsuario(){
-  console.log("Ingrese su correo electronico"); 
+export async function loginPsicologo(){
+  console.log("Ingrese su correo electronico");
   var email = prompts("Correo: ");
   console.log("Ingrese su contraseña");
   var password = prompts("Contraseña: ");
-  const userData = await client.users.authViaEmail(email, password);
-  console.clear();
-  console.log("Bienvenido " + userData.name);
-  if (userData.role == "Patient") {
-    return true;
-  } else {
-    return false;
+  const res = await client.collection("psychologists").authWithPassword(email, password);
+  console.log(res)
+  if(res){
+    console.log("Bienvenido");
+    menuPsicologo();
+  }else{
+    console.log("Correo o contraseña invalidos");
   }
+  
 }
