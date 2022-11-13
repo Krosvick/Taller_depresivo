@@ -5,8 +5,8 @@ const prompts = require('prompt-sync')();
 const client = new PocketBase('http://127.0.0.1:8090');
 
 function validateEmail(email) {
-  const re = /\S+@\S+\.\S+/;
-  return re.test(email);
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
 }
 function validatePassword(password) {
     const re = /^\S{8,}$/;
@@ -20,18 +20,18 @@ function validateRun(run: string) {
     const re = /^\d{7,8}$/;
     return re.test(run);
 }
-function calculateDv(run) {
-  let sum = 0;
-  let i = 0;
-  let dv = 0;
-  for (i = 0; i < run.length; i++) {
-    sum += parseInt(run[i]) * (i + 2);
-  }
-  dv = 11 - (sum % 11);
-  if (dv == 11) {
-    dv = 0;
-  }
-  return dv;
+function calculateDv(run): number {
+    let sum = 0;
+    let i = 0;
+    let dv = 0;
+    for (i = 0; i < run.length; i++) {
+        sum += parseInt(run[i]) * (i + 2);
+    }
+    dv = 11 - (sum % 11);
+    if (dv == 11) {
+        dv = 0;
+    }
+    return dv;
 }
 function birthDateGetter(): string {
     let fechaNacimiento: string;
