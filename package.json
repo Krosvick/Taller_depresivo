@@ -23,11 +23,12 @@
     "cross-fetch": "^3.1.5",
     "eventsource": "^2.0.2",
     "mysql": "^2.18.1",
-    "pocketbase": "^0.8.0-rc2"
+    "pocketbase": "^0.8.0-rc3"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
     "prompt-sync": "^4.2.0",
+    "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   }
 }

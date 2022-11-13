@@ -2,8 +2,8 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "prod",
-    "target": "ES2022",
-    "module": "ES2022",
+    "target": "ESNext",
+    "module": "CommonJS",
     "sourceMap": true,
     "esModuleInterop": true,
     "moduleResolution": "node"
