@@ -1,3 +1,4 @@
+import { Record } from "pocketbase";
 import {prompts, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun} from "./utility"
 //Referencia
 /*async function getAllRecords() {
@@ -99,7 +100,6 @@ async function agregarUsuario(){
   let apellidoPaterno = prompts("Ingrese el apellido paterno: ");
   let apellidoMaterno = prompts("Ingrese el apellido materno: ");
   let correo;
-  let contraseña;
   let genero;
   let run;
   while(true){
@@ -110,15 +110,6 @@ async function agregarUsuario(){
       console.log("Correo invalido");
     }
   }
-  /*while(true){
-    contraseña = prompts("Ingrese la contraseña: ");
-    if(validatePassword(contraseña)){
-      break;
-    }
-    else{
-      console.log("Contraseña invalida");
-    }
-  }*/
   let selectables = ["Masculino", "Femenino", "No-binario", "Prefiero no responder"];
   while(true){
     console.log("Ingrese su genero");

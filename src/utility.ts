@@ -32,6 +32,18 @@ function calculateDv(run): number {
         dv = 0;
     }
     return dv;
+}   
+function dateFormatter(date: string): string {
+    let dateArray = date.split("/");
+    let day = dateArray[0];
+    let month = dateArray[1];
+    if(month.length < 2){
+        month = "0" + month;
+    }
+    let year = dateArray[2];
+    let utcDate = year + "-" + month + "-" + day + " 00:00:00";
+    return utcDate;
+    
 }
 function birthDateGetter(): string {
     let fechaNacimiento: string;
@@ -89,11 +101,12 @@ function birthDateGetter(): string {
                 console.log("Año invalido");
             }
         }
-        fechaNacimiento = dia + "/" + mes + "/" + año; 
-        console.log("Su fecha de nacimiento es: " + fechaNacimiento);
+        let fechaNacimientoUnform: string = dia + "/" + mes + "/" + año; 
+        fechaNacimiento = dateFormatter(fechaNacimientoUnform);
+        console.log("Su fecha de nacimiento es: " + fechaNacimientoUnform);
         let confirmacion = prompts("¿Es correcta? (s/n): ");
         if(confirmacion == "s"){
-            break;
+            return fechaNacimiento;
         }
     }
     return fechaNacimiento;
