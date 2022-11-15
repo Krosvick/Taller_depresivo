@@ -152,7 +152,10 @@ async function agregarUsuario(){
     const record = await client.collection('patients').create(userData);
     console.log("Usuario creado exitosamente");
   }catch(error){
-    console.log(errorParser(error));
+    let errorArray = errorParser(error);
+    while(errorArray.length > 0){
+      console.log(errorArray.pop());
+    } 
   }
   manejarUsuarios();
 }

@@ -118,18 +118,17 @@ function birthDateGetter(): string {
     return fechaNacimiento;
 }
 //function that gets an error object and returns a string with the error message for each data error
-function errorParser(error: any): string {
+function errorParser(error: any): string[] {
     //error object has a data property that could have another data property containing the error messsages if there are more than one error
     //the way to acces the message is data.data.property1.message for the multiple error case
     //and data.data.property1.message for the single error case
-    let errorMessage: string = "";
-    if(error.data.data){
-        for(let property in error.data.data){
-            errorMessage += error.data.data[property].message + "\n";
-        }
-    }else{
-        errorMessage = error.data.message;
+    //return an array, each element will have the property name and the error message
+    //example Birthdate: Value must be a date
+    let errorArray: string[] = [];
+    let errorObject = error.data.data;
+    for(let property in errorObject){
+        errorArray.push(property + ": " + errorObject[property].message);
     }
-    return errorMessage;
+    return errorArray;
 }
 export {prompts, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter, errorParser};
