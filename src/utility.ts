@@ -21,17 +21,23 @@ function validateRun(run: string) {
     return re.test(run);
 }
 function calculateDv(run): number {
-    let sum = 0;
-    let i = 0;
-    let dv = 0;
-    for (i = 0; i < run.length; i++) {
-        sum += parseInt(run[i]) * (i + 2);
+    //Calcular digito verificador segun rut
+    let suma = 0;
+    let multiplicador = 2;
+    for(let i = run.length - 1; i >= 0; i--){
+        suma += Number(run[i]) * multiplicador;
+        multiplicador++;
+        if(multiplicador == 8){
+            multiplicador = 2;
+        }
     }
-    dv = 11 - (sum % 11);
-    if (dv == 11) {
+    let resto = suma % 11;
+    let dv = 11 - resto;
+    if(dv == 11){
         dv = 0;
     }
     return dv;
+    
 }   
 function dateFormatter(date: string): string {
     let dateArray = date.split("/");
@@ -111,4 +117,19 @@ function birthDateGetter(): string {
     }
     return fechaNacimiento;
 }
-export {prompts, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter};
+//function that gets an error object and returns a string with the error message for each data error
+function errorParser(error: any): string {
+    //error object has a data property that could have another data property containing the error messsages if there are more than one error
+    //the way to acces the message is data.data.property1.message for the multiple error case
+    //and data.data.property1.message for the single error case
+    let errorMessage: string = "";
+    if(error.data.data){
+        for(let property in error.data.data){
+            errorMessage += error.data.data[property].message + "\n";
+        }
+    }else{
+        errorMessage = error.data.message;
+    }
+    return errorMessage;
+}
+export {prompts, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter, errorParser};

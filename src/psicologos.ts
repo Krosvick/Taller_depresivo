@@ -1,5 +1,5 @@
 import { Record } from "pocketbase";
-import {prompts, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun} from "./utility"
+import {prompts, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser} from "./utility"
 //Referencia
 /*async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
@@ -63,7 +63,6 @@ function verTests(){
   };
 }
 function manejarUsuarios(){
-  console.clear();
   console.log("1) Ver todos los usuarios");
   console.log("2) Agregar un usuario");
   console.log("3) Eliminar un usuario");
@@ -153,7 +152,7 @@ async function agregarUsuario(){
     const record = await client.collection('patients').create(userData);
     console.log("Usuario creado exitosamente");
   }catch(error){
-    console.log(error);
+    console.log(errorParser(error));
   }
   manejarUsuarios();
 }
