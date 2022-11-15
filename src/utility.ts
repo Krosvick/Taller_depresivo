@@ -8,10 +8,10 @@ function validateEmail(email) {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
 }
-function validatePassword(password) {
+/*function validatePassword(password) {
     const re = /^\S{8,}$/;
     return re.test(password);
-}
+}*/
 function usernameCreator(name, lastname){
     let username = name.substring(0, 3) + lastname.substring(0, 3) + Math.floor(Math.random() * 1000);
     return username; 
@@ -41,6 +41,7 @@ function birthDateGetter(): string {
     while(true){
         while(true){
             mes = prompts("Ingrese el mes de nacimiento: ");
+            mes = Number(mes);
             if(mes >= 1 && mes <= 12){
                 break;
             }else{
@@ -51,6 +52,7 @@ function birthDateGetter(): string {
             //verify if the month has 31 days
             if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
                 dia = prompts("Ingrese el dia de nacimiento: ");
+                dia = Number(dia);
                 if(dia >= 1 && dia <= 31){
                     break;
                 }else{
@@ -59,7 +61,8 @@ function birthDateGetter(): string {
             }
             //verify if the month has 30 days
             else if(mes == 4 || mes == 6 || mes == 9 || mes == 11){
-                let dia = prompts("Ingrese el dia de nacimiento: ");
+                dia = prompts("Ingrese el dia de nacimiento: ");
+                dia = Number(dia);
                 if(dia >= 1 && dia <= 30){
                     break;
                 }else{
@@ -68,7 +71,8 @@ function birthDateGetter(): string {
             }
             //verify if the month is february
             else if(mes == 2){
-                let dia = prompts("Ingrese el dia de nacimiento: ");
+                dia = prompts("Ingrese el dia de nacimiento: ");
+                dia = Number(dia);
                 if(dia >= 1 && dia <= 28){
                     break;
                 }else{
@@ -78,6 +82,7 @@ function birthDateGetter(): string {
         }
         while(true){
             año = prompts("Ingrese el año de nacimiento: ");
+            año = Number(año); 
             if(año >= 1900 && año <= 2020){
                 break;
             }else{
@@ -94,4 +99,4 @@ function birthDateGetter(): string {
     }
     return fechaNacimiento;
 }
-export {prompts, client, PocketBase, validateEmail, validatePassword, usernameCreator, validateRun, calculateDv, birthDateGetter};
+export {prompts, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter};

@@ -1,4 +1,4 @@
-import {prompts, validatePassword, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun} from "./utility"
+import {prompts, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun} from "./utility"
 //Referencia
 /*async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
@@ -9,7 +9,6 @@ import {prompts, validatePassword, validateEmail, client, birthDateGetter, calcu
 
 
 export function menuPsicologo(){
-  console.clear();
   console.log("1) Ver tests"); 
   console.log("2) ver encuestas realizadas");
   console.log("3) Manejar usuarios");
@@ -111,7 +110,7 @@ async function agregarUsuario(){
       console.log("Correo invalido");
     }
   }
-  while(true){
+  /*while(true){
     contraseña = prompts("Ingrese la contraseña: ");
     if(validatePassword(contraseña)){
       break;
@@ -119,7 +118,7 @@ async function agregarUsuario(){
     else{
       console.log("Contraseña invalida");
     }
-  }
+  }*/
   let selectables = ["Masculino", "Femenino", "No-binario", "Prefiero no responder"];
   while(true){
     console.log("Ingrese su genero");
@@ -148,23 +147,19 @@ async function agregarUsuario(){
   let telefono = prompts("Ingrese el telefono: ");
   let observaciones = prompts("Ingrese las observaciones: ");
   const userData = {
-    "username": usernameCreator(nombres, apellidoPaterno),
     "email": correo,
-    "emailVisible": true,
-    "password": contraseña,
-    "passwordConfirm": contraseña,
     "names": nombres,
     "lastName": apellidoPaterno,
     "secondLastName": apellidoMaterno,
     "run": Number(run),
     "dv": digitoVerificador,
     "gender": genero,
-    "birthDate": fechaNacimiento,
+    "birthday": fechaNacimiento,
     "telephone": telefono,
     "observation" : observaciones
   } 
   try{
-    const record = await client.collection('users').create(userData);
+    const record = await client.collection('patients').create(userData);
     console.log("Usuario creado exitosamente");
   }catch(error){
     console.log(error);
