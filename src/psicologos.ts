@@ -148,18 +148,14 @@ async function agregarUsuario(){
   let telefono = prompts("Ingrese el telefono: ");
   let observaciones = prompts("Ingrese las observaciones: ");
   const userData = {
-    "username": usernameCreator(nombres, apellidoPaterno),
     "email": correo,
-    "emailVisible": true,
-    "password": contraseña,
-    "passwordConfirm": contraseña,
     "names": nombres,
     "lastName": apellidoPaterno,
     "secondLastName": apellidoMaterno,
     "run": Number(run),
     "dv": digitoVerificador,
     "gender": genero,
-    "birthDate": fechaNacimiento,
+    "birthday": fechaNacimiento,
     "telephone": telefono,
     "observation" : observaciones
   } 

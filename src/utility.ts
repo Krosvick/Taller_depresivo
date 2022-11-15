@@ -84,9 +84,8 @@ function birthDateGetter(): string {
                 console.log("Año invalido");
             }
         }
-        fechaNacimiento = año + "-" + mes + "-" + dia;
-        let fechaNacimientoDisplay = dia + "/" + mes + "/" + año; 
-        console.log("Su fecha de nacimiento es: " + fechaNacimientoDisplay); 
+        fechaNacimiento = dia + "/" + mes + "/" + año; 
+        console.log("Su fecha de nacimiento es: " + fechaNacimiento);
         let confirmacion = prompts("¿Es correcta? (s/n): ");
         if(confirmacion == "s"){
             break;
