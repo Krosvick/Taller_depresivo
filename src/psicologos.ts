@@ -161,13 +161,23 @@ async function verTodosLosUsuarios(i: number, j: number){
 }
 
 //**Seccion de Tests
-//create test type
 type Test = {
   name: string,
   cut_point: number,
   max_point: number,
   observation: string,
   ageRange: string
+}
+type question = {
+  "content": string,
+  "description": string,
+  "test_id": string[],
+}
+type respuesta = {
+  "points": number,
+  "content": string,
+  "observation": string,
+  "question_id": string,
 }
 
 function administrarTests(){
@@ -426,7 +436,7 @@ async function actualizarTest(id?: string){
     }
   }
 }
-async function agregarPreguntas(id?: string){
+async function administradorPreguntas(id?: string){
   if (id == undefined){
     console.clear();
     console.log("ingrese el id del test al que desea agregar preguntas");
@@ -439,7 +449,7 @@ async function agregarPreguntas(id?: string){
   }
   let check = false;
   while(check == false){
-    console.log("1) Agregar preguntas");
+    console.log("1) Administrar preguntas");
     console.log("2) Salir");
     let opcion = prompts("Ingrese una opcion: ");
     switch(opcion){
@@ -455,4 +465,51 @@ async function agregarPreguntas(id?: string){
         continue;
     }
   }
+}
+async function menuPreguntas(id?: string){
+  console.clear();
+  console.log("1) Agregar pregunta");
+  console.log("2) Modificar pregunta");
+  console.log("3) Eliminar pregunta");
+  console.log("4) Salir");
+  let opcion = prompts("Ingrese una opcion: ");
+  switch(opcion){
+    case "1":
+      //agregarPregunta(id);
+      break;
+    case "2":
+      //modificarPregunta(id);
+      break;
+    case "3":
+      //eliminarPregunta(id);
+      break;
+    case "4":
+      administrarTests();
+      break;
+    default:
+      console.log("Opcion invalida");
+      menuPreguntas(id);
+  }
+}
+async function agregarPregunta(id: string){
+  let addQuestion: question;
+  console.log("Ingrese los datos de la pregunta");
+  while (true){
+    let pregunta = prompts("Ingrese la pregunta: ");
+    if (pregunta != ""){
+      addQuestion.content  = pregunta;
+      break;
+    }else{
+      console.log("La pregunta no puede estar vacia");
+    }
+  }
+  console.log("Ingrese una descripcion de la pregunta");
+  console.log("opcional, ingrese enter para omitir");
+  let descripcion = prompts("Ingrese la descripcion: ");
+  addQuestion.description = descripcion;
+  //add id to addQuestion objecc as test_id wich is an array
+  addQuestion.test_id[0] = id;
+
+  const result = await client.collection('questions').create(addQuestion);
+
 }
