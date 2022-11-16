@@ -1,5 +1,5 @@
 import { Record } from "pocketbase";
-import {prompts, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser} from "./utility"
+import {prompts, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser} from "./utility"
 //Referencia
 /*async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
@@ -7,17 +7,15 @@ import {prompts, validateEmail, client, birthDateGetter, calculateDv, usernameCr
   console.log(records.contenido);
 }*/
 
-
-
 export function menuPsicologo(){
-  console.log("1) Ver tests"); 
+  console.log("1) Administrar tests"); 
   console.log("2) ver encuestas realizadas");
   console.log("3) Manejar usuarios");
   console.log("4) Salir");
   var opcion = prompts("Ingrese una opcion: ");
   switch(opcion){
     case "1":
-      //verTests();
+      administrarTests();
       break;
     case "2":
       //verEncuestasRealizadas();
@@ -36,32 +34,7 @@ export function menuPsicologo(){
   };
 }
 
-function verTests(){
-  console.clear();
-  console.log("1) Ver todos los tests");
-  console.log("2) Agregar un test");
-  console.log("3) Eliminar un test");
-  console.log("4) Salir");
-  var opcion = prompts("Ingrese una opcion: ");
-  switch(opcion){
-    case "1":
-      //verTodosLosTests();
-      break;
-    case "2":
-      //agregarTest();
-      break;
-    case "3":
-      //eliminarTest();
-      break;
-    case "4":
-      menuPsicologo();
-      break;
-    default:
-      console.log("Opcion invalida");
-      verTests();
-      break;
-  };
-}
+//**seccion de manejo de usuarios
 function manejarUsuarios(){
   console.log("1) Ver todos los usuarios");
   console.log("2) Agregar un usuario");
@@ -180,6 +153,55 @@ async function verTodosLosUsuarios(){
     default:
       console.log("Opcion invalida");
       verTodosLosUsuarios();
+      break;
+  };
+}
+
+//**Seccion de Tests
+function administrarTests(){
+  console.log("1) Ver tests");
+  console.log("2) Agregar un test");
+  console.log("3) Eliminar un test");
+  console.log("4) Salir");
+  var opcion = prompts("Ingrese una opcion: ");
+  switch(opcion){
+    case "1":
+      verTests(1,5);
+      break;
+    case "2":
+      //agregarTest();
+      break;
+    case "3":
+      //eliminarTest();
+      break;
+    case "4":
+      menuPsicologo();
+      break;
+    default:
+      console.log("Opcion invalida");
+      administrarTests();
+      break;
+  };
+}
+async function verTests(i: number, j: number){
+  console.clear();
+  console.log("Cargando los primeros 5 tests");
+  const resultList = await client.collection('tests').getList(i,j);
+  let resultMatrix = listParser(resultList, ["id", "name", "observation"]); 
+  console.log(table(resultMatrix));
+  console.log("1) Ver mas tests");
+  console.log("2) Salir");
+  var opcion = prompts("Ingrese una opcion: ");
+  switch(opcion){
+    case "1":
+      verTests(i+5,j+5);
+      break;
+    case "2":
+      administrarTests(); 
+      break;
+    default:
+      console.log("Opcion invalida");
+      verTests(i,j);
       break;
   };
 }

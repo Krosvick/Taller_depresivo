@@ -4,14 +4,13 @@ const prompts = require('prompt-sync')();
 
 const client = new PocketBase('http://127.0.0.1:8090');
 
+const { table } = require('table');
+
 function validateEmail(email) {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
 }
-/*function validatePassword(password) {
-    const re = /^\S{8,}$/;
-    return re.test(password);
-}*/
+
 function usernameCreator(name, lastname){
     let username = name.substring(0, 3) + lastname.substring(0, 3) + Math.floor(Math.random() * 1000);
     return username; 
@@ -51,6 +50,7 @@ function dateFormatter(date: string): string {
     return utcDate;
     
 }
+//* Funcion para obtener fecha de nacimiento con verificacion de dias y meses
 function birthDateGetter(): string {
     let fechaNacimiento: string;
     let mes: number;
@@ -67,7 +67,6 @@ function birthDateGetter(): string {
             }
         }
         while(true){
-            //verify if the month has 31 days
             if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
                 dia = prompts("Ingrese el dia de nacimiento: ");
                 dia = Number(dia);
@@ -77,7 +76,6 @@ function birthDateGetter(): string {
                     console.log("Dia invalido");
                 }
             }
-            //verify if the month has 30 days
             else if(mes == 4 || mes == 6 || mes == 9 || mes == 11){
                 dia = prompts("Ingrese el dia de nacimiento: ");
                 dia = Number(dia);
@@ -87,7 +85,6 @@ function birthDateGetter(): string {
                     console.log("Dia invalido");
                 }
             }
-            //verify if the month is february
             else if(mes == 2){
                 dia = prompts("Ingrese el dia de nacimiento: ");
                 dia = Number(dia);
@@ -117,13 +114,8 @@ function birthDateGetter(): string {
     }
     return fechaNacimiento;
 }
-//function that gets an error object and returns a string with the error message for each data error
+//* Funcion para listar errores de manera mas legible
 function errorParser(error: any): string[] {
-    //error object has a data property that could have another data property containing the error messsages if there are more than one error
-    //the way to acces the message is data.data.property1.message for the multiple error case
-    //and data.data.property1.message for the single error case
-    //return an array, each element will have the property name and the error message
-    //example Birthdate: Value must be a date
     let errorArray: string[] = [];
     let errorObject = error.data.data;
     for(let property in errorObject){
@@ -131,4 +123,17 @@ function errorParser(error: any): string[] {
     }
     return errorArray;
 }
-export {prompts, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter, errorParser};
+//* Funcion para listar elementos de una tabla
+function listParser(list: any, requiredPropertys: string[]): any[] {
+    let listArray: any[] = [];
+    for(let i = 0; i < list.items.length; i++){
+        let itemArray: any[] = [];
+        for(let j = 0; j < requiredPropertys.length; j++){
+            itemArray.push(list.items[i][requiredPropertys[j]]);
+        }
+        listArray.push(itemArray);
+    }
+    return listArray;
+}
+
+export {prompts, table, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter, errorParser, listParser};
