@@ -185,7 +185,7 @@ function administrarTests(){
       agregarTest();
       break;
     case "3":
-      //actualizarTest();
+      actualizarTest();
       break;
     case "4":
       //eliminarTest();
@@ -312,9 +312,16 @@ async function agregarTest(){
 async function actualizarTest(id?: string){
   if (id == undefined){
     console.clear();
-    console.log("Ingrese el id del test a modificar");
+    //ask fo id or to exit
+    console.log("ingrese el id del test que desea modificar");
+    console.log("o ingrese enter para salir")
     id = prompts("Ingrese el id: ");
+    if (id == ""){
+      administrarTests();
+      return;
+    }
   }
+  let check = false;
   const record = await client.collection('tests').getOne(id);
   let data: Test = {
     name: record.name,
@@ -323,7 +330,7 @@ async function actualizarTest(id?: string){
     ageRange: record.ageRange,
     observation: record.observation
   }
-  while(true){
+  while(check == false){
     console.log("Ingrese que campos desea modificar");
     console.log("1) Nombre");
     console.log("2) Puntaje de corte");
@@ -344,6 +351,7 @@ async function actualizarTest(id?: string){
             console.log("El nombre no puede estar vacio");
           }
         }
+        break;
       case "2":
         console.log("Ingrese el nuevo puntaje de corte");
         while(true){
@@ -355,6 +363,7 @@ async function actualizarTest(id?: string){
             console.log("El puntaje de corte debe ser un numero");
           }
         }
+        break;
       case "3":
         console.log("Ingrese el nuevo puntaje maximo");
         while(true){
@@ -367,6 +376,7 @@ async function actualizarTest(id?: string){
             console.log("El puntaje maximo debe ser un numero");
           }
         }
+        break;
       case "4":
         console.log("Ingrese el nuevo rango de edad");
         while (true){
@@ -378,15 +388,41 @@ async function actualizarTest(id?: string){
             console.log("El rango de edad no puede estar vacio");
           }
         }
+        break;
       case "5":
         console.log("Ingrese las nuevas observaciones");
         let observaciones = prompts("Ingrese las observaciones: ");
         data.observation = observaciones;
+        break;
       case "6":
         break;
       default:
         console.log("Opcion invalida");
+        continue;
+    }
+    try{
+      await client.collection('tests').update(id, data);
+      console.table(data);
+      console.log("Test actualizado exitosamente");
+    }catch(error){
+      let errorArray = errorParser(error);
+      while(errorArray.length > 0){
+        console.log(errorArray.pop());
+      }
+    }
+    console.log("1) Modificar otro campo");
+    console.log("2) Salir");
+    let opt = prompts("Ingrese una opcion: ");
+    switch(opt){
+      case "1":
+        continue;
+      case "2":
+        administrarTests();
+        check = true;
         break;
+      default:
+        console.log("Opcion invalida");
+        continue;
     }
   }
 }
