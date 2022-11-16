@@ -274,10 +274,10 @@ async function agregarTest(){
     "ageRange": rangoEdad,
     "observation": observaciones
   }
-  let data;
+  let testId;
   try{
     const record = await client.collection('tests').create(test);
-    data = record.id;
+    testId = record.id;
     console.log("Test creado exitosamente");
   }catch(error){
     let errorArray = errorParser(error);
@@ -295,7 +295,7 @@ async function agregarTest(){
       agregarTest();
       break;
     case "2":
-      actualizarTest(data);
+      actualizarTest(testId);
       break;
     case "3":
       //agregarPreguntas();
@@ -425,4 +425,18 @@ async function actualizarTest(id?: string){
         continue;
     }
   }
+}
+async function agregarPreguntas(id?: string){
+  if (id == undefined){
+    console.clear();
+    console.log("ingrese el id del test al que desea agregar preguntas");
+    console.log("o ingrese enter para salir")
+    id = prompts("Ingrese el id: ");
+    if (id == ""){
+      administrarTests();
+      return;
+    }
+  }
+  let check = false;
+  
 }
