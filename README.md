@@ -55,6 +55,14 @@ En linux
 ~~~bash
 ./pocketbase serve
 ~~~
+##Ejecutar el compilador tsc y correr el programa
+~~~bash
+npm run build
+~~~
+Luego
+~~~bash
+node ./prod/main.js
+~~~
 
 Para acceder al dashboard de pocketbase, ingrese al siguiente enlace con su cuenta de administrador:
 
