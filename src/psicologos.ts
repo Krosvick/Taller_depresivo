@@ -438,5 +438,21 @@ async function agregarPreguntas(id?: string){
     }
   }
   let check = false;
-  
+  while(check == false){
+    console.log("1) Agregar preguntas");
+    console.log("2) Salir");
+    let opcion = prompts("Ingrese una opcion: ");
+    switch(opcion){
+      case "1":
+        //menuPreguntas();
+        break;
+      case "2":
+        administrarTests();
+        check = true;
+        break;
+      default:
+        console.log("Opcion invalida");
+        continue;
+    }
+  }
 }
