@@ -198,8 +198,14 @@ async function verTests(i: number, j: number){
   var opcion = prompts("Ingrese una opcion: ");
   switch(opcion){
     case "1":
+      if (resultList.perPage < resultList.totalItems){
       verTests(i+5,j+5);
       break;
+      }else{
+        console.log("No hay mas tests");
+        administrarTests();
+        break;
+      }
     case "2":
       administrarTests(); 
       break;
