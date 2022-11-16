@@ -161,8 +161,9 @@ async function verTodosLosUsuarios(){
 function administrarTests(){
   console.log("1) Ver tests");
   console.log("2) Agregar un test");
-  console.log("3) Eliminar un test");
-  console.log("4) Salir");
+  console.log("3) Actualizar un test");
+  console.log("4) Eliminar un test");
+  console.log("5) Salir");
   var opcion = prompts("Ingrese una opcion: ");
   switch(opcion){
     case "1":
@@ -172,9 +173,12 @@ function administrarTests(){
       //agregarTest();
       break;
     case "3":
-      //eliminarTest();
+      //actualizarTest();
       break;
     case "4":
+      //eliminarTest();
+      break;
+    case "5":
       menuPsicologo();
       break;
     default:
@@ -204,4 +208,10 @@ async function verTests(i: number, j: number){
       verTests(i,j);
       break;
   };
+}
+async function agregarTest(){
+  console.clear();
+  console.log("Ingrese los siguientes datos");
+  
+
 }
