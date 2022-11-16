@@ -161,6 +161,15 @@ async function verTodosLosUsuarios(i: number, j: number){
 }
 
 //**Seccion de Tests
+//create test type
+type Test = {
+  name: string,
+  cut_point: number,
+  max_point: number,
+  observation: string,
+  ageRange: string
+}
+
 function administrarTests(){
   console.log("1) Ver tests");
   console.log("2) Agregar un test");
@@ -260,13 +269,15 @@ async function agregarTest(){
   observaciones = prompts("Ingrese las observaciones: ");
   const test = {
     "name": nombre,
-    "cutScore": puntajeCorte,
-    "maxScore": puntajeMaximo,
+    "cut_point": puntajeCorte,
+    "max_point": puntajeMaximo,
     "ageRange": rangoEdad,
     "observation": observaciones
   }
+  let data;
   try{
     const record = await client.collection('tests').create(test);
+    data = record.id;
     console.log("Test creado exitosamente");
   }catch(error){
     let errorArray = errorParser(error);
@@ -276,21 +287,106 @@ async function agregarTest(){
   }
   console.log("1) Agregar otro test");
   console.log("2) Modificar el test actual");
-  console.log("3) Salir");
+  console.log("3) Agregar preguntas al test actual");
+  console.log("4) Salir");
   let opcion = prompts("Ingrese una opcion: ");
   switch(opcion){
     case "1":
       agregarTest();
       break;
     case "2":
-      //actualizarTest();
+      actualizarTest(data);
       break;
     case "3":
+      //agregarPreguntas();
+      break;
+    case "4":
       administrarTests();
       break;
     default:
       console.log("Opcion invalida");
       agregarTest();
       break;
+  }
+}
+async function actualizarTest(id?: string){
+  if (id == undefined){
+    console.clear();
+    console.log("Ingrese el id del test a modificar");
+    id = prompts("Ingrese el id: ");
+  }
+  const record = await client.collection('tests').getOne(id);
+  let data: Test = {
+    name: record.name,
+    cut_point: record.cut_point,
+    max_point: record.max_point,
+    ageRange: record.ageRange,
+    observation: record.observation
+  }
+  while(true){
+    console.log("Ingrese que campos desea modificar");
+    console.log("1) Nombre");
+    console.log("2) Puntaje de corte");
+    console.log("3) Puntaje maximo");
+    console.log("4) Rango de edad");
+    console.log("5) Observaciones");
+    console.log("6) Salir");
+    let opcion = prompts("Ingrese una opcion: ");
+    switch(opcion){
+      case "1":
+        console.log("Ingrese el nuevo nombre");
+        while (true){
+          let nombre = prompts("Ingrese el nombre: ");
+          if (nombre != ""){
+            data.name = nombre;
+            break;
+          }else{
+            console.log("El nombre no puede estar vacio");
+          }
+        }
+      case "2":
+        console.log("Ingrese el nuevo puntaje de corte");
+        while(true){
+          let puntajeCorte = Number(prompts("Ingrese el puntaje de corte: "));
+          if (puntajeCorte != undefined){
+            data.cut_point = puntajeCorte;
+            break;
+          }else{
+            console.log("El puntaje de corte debe ser un numero");
+          }
+        }
+      case "3":
+        console.log("Ingrese el nuevo puntaje maximo");
+        while(true){
+          //check also that puntaje maximo is greater than puntaje corte
+          let puntajeMaximo = Number(prompts("Ingrese el puntaje maximo: "));
+          if (puntajeMaximo != undefined && puntajeMaximo > data.cut_point){
+            data.max_point = puntajeMaximo;
+            break;
+          }else{
+            console.log("El puntaje maximo debe ser un numero");
+          }
+        }
+      case "4":
+        console.log("Ingrese el nuevo rango de edad");
+        while (true){
+          let rangoEdad = prompts("Ingrese el rango de edad: ");
+          if (rangoEdad != "" && rangoEdad.match(/^[0-9]+-[0-9]+$/)){
+            data.ageRange = rangoEdad;
+            break;
+          }else{
+            console.log("El rango de edad no puede estar vacio");
+          }
+        }
+      case "5":
+        console.log("Ingrese las nuevas observaciones");
+        let observaciones = prompts("Ingrese las observaciones: ");
+        data.observation = observaciones;
+      case "6":
+        break;
+      default:
+        console.log("Opcion invalida");
+        break;
+    }
   }
 }
