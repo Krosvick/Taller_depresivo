@@ -132,27 +132,30 @@ async function agregarUsuario(){
   }
   manejarUsuarios();
 }
-async function verTodosLosUsuarios(){
+async function verTodosLosUsuarios(i: number, j: number){
   console.clear();
   console.log("Cargando los primeros 5 usuarios");
-  const resultList = await client.collection('users').getList(1,5);
-  /*for(let i = 0; i < resultList.length; i++){
-    console.log(resultList[i].names + " " + resultList[i].lastName + " " + resultList[i].secondLastName + " "+ 
-    resultList[i].username);
-  }*/
+  const resultList = await client.collection('users').getList(i,j);
+  let resultMatrix = listParser(resultList, ["id", "names", "email"]);
+  console.log(table(resultMatrix));
   console.log("1) Ver mas usuarios");
   console.log("2) Salir");
   var opcion = prompts("Ingrese una opcion: ");
   switch(opcion){
     case "1":
-      //verMasUsuarios();
+      if(resultList.length < resultList.totalItems){
+        verTodosLosUsuarios(i+5, j+5);
+      }else{
+        console.log("No hay mas usuarios");
+        manejarUsuarios();
+      }
       break;
     case "2":
       manejarUsuarios();
       break;
     default:
       console.log("Opcion invalida");
-      verTodosLosUsuarios();
+      verTodosLosUsuarios(i, j);
       break;
   };
 }
