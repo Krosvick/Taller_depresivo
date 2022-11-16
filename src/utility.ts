@@ -38,6 +38,7 @@ function calculateDv(run): number {
     return dv;
     
 }   
+
 function dateFormatter(date: string): string {
     let dateArray = date.split("/");
     let day = dateArray[0];
