@@ -11,7 +11,7 @@ export function menuPsicologo(){
   console.log("1) Administrar tests"); 
   console.log("2) ver encuestas realizadas");
   console.log("3) Manejar usuarios");
-  console.log("4) Salir");
+  console.log("4) Salir del programa");
   var opcion = prompts("Ingrese una opcion: ");
   switch(opcion){
     case "1":
@@ -39,7 +39,7 @@ function manejarUsuarios(){
   console.log("1) Ver todos los usuarios");
   console.log("2) Agregar un usuario");
   console.log("3) Eliminar un usuario");
-  console.log("4) Salir");
+  console.log("4) Salir del menu de usuarios");
   var opcion = prompts("Ingrese una opcion: ");
   switch(opcion){
     case "1":
@@ -173,7 +173,7 @@ function administrarTests(){
       verTests(1,5);
       break;
     case "2":
-      //agregarTest();
+      agregarTest();
       break;
     case "3":
       //actualizarTest();
@@ -221,6 +221,76 @@ async function verTests(i: number, j: number){
 async function agregarTest(){
   console.clear();
   console.log("Ingrese los siguientes datos");
-  
-
+  console.log("Los campos obligatorios son: Nombre, puntaje de corte, puntaje maximo y rango de edad");
+  console.log("Campos opcionales: Observaciones");
+  let nombre: string;
+  let puntajeCorte: number;
+  let puntajeMaximo: number;
+  let rangoEdad: string;
+  let observaciones: string;
+  while (true){
+    nombre = prompts("Ingrese el nombre del test: ");
+    if (nombre != ""){
+      break;
+    }else{
+      console.log("El nombre no puede estar vacio");
+    }
+  }
+  while(puntajeCorte == undefined){
+    puntajeCorte = Number(prompts("Ingrese el puntaje de corte: "));
+    if (puntajeCorte == undefined){
+      console.log("El puntaje de corte debe ser un numero");
+    } 
+  }
+  while(puntajeMaximo == undefined){
+    puntajeMaximo = Number(prompts("Ingrese el puntaje maximo: "));
+    if (puntajeMaximo == undefined){
+      console.log("El puntaje maximo debe ser un numero");
+    }
+  }
+  while (true){
+    rangoEdad = prompts("Ingrese el rango de edad: ");
+    //rangoEdad must follow the format "x-y" where x and y are numbers
+    if (rangoEdad != "" && rangoEdad.match(/^[0-9]+-[0-9]+$/)){
+      break;
+    }else{
+      console.log("El rango de edad no puede estar vacio");
+    }
+  }
+  observaciones = prompts("Ingrese las observaciones: ");
+  const test = {
+    "name": nombre,
+    "cutScore": puntajeCorte,
+    "maxScore": puntajeMaximo,
+    "ageRange": rangoEdad,
+    "observation": observaciones
+  }
+  try{
+    const record = await client.collection('tests').create(test);
+    console.log("Test creado exitosamente");
+  }catch(error){
+    let errorArray = errorParser(error);
+    while(errorArray.length > 0){
+      console.log(errorArray.pop());
+    }
+  }
+  console.log("1) Agregar otro test");
+  console.log("2) Modificar el test actual");
+  console.log("3) Salir");
+  let opcion = prompts("Ingrese una opcion: ");
+  switch(opcion){
+    case "1":
+      agregarTest();
+      break;
+    case "2":
+      //actualizarTest();
+      break;
+    case "3":
+      administrarTests();
+      break;
+    default:
+      console.log("Opcion invalida");
+      agregarTest();
+      break;
+  }
 }
