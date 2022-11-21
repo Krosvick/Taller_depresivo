@@ -1,6 +1,5 @@
-import {prompts, client, validateEmail, errorParser} from "./utility";
+import {prompts, client, inquirer, validateEmail, errorParser} from "./utility";
 import { menuPsicologo } from "./psicologos";
-
 
 export async function loginPsicologo(){
   console.log("Ingrese su correo electronico");
@@ -14,14 +13,19 @@ export async function loginPsicologo(){
     }
   }  
   console.log("Ingrese su contraseña");
-  let password = prompts("Contraseña: ");
+  const message = await inquirer.prompt({
+    type: "password",
+    name: "password",
+    message: "Contraseña: ",
+    mask: "*"
+  });
   try{
-    const res = await client.collection("psychologists").authWithPassword(email, password);
+    const res = await client.collection("psychologists").authWithPassword(email, message.password);
     console.log("Bienvenido" + " "+ res.record.names);
     menuPsicologo();
   }catch(error){
     console.log("Correo o contraseña invalidos");
     loginPsicologo();
   }
-  
+  return;
 }
