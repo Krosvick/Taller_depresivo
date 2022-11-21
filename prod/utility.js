@@ -54,6 +54,7 @@ function dateFormatter(date) {
     let utcDate = year + "-" + month + "-" + day + " 00:00:00";
     return utcDate;
 }
+//* Funcion para obtener fecha de nacimiento con verificacion de dias y meses
 function birthDateGetter() {
     let fechaNacimiento;
     let mes;
@@ -71,7 +72,6 @@ function birthDateGetter() {
             }
         }
         while (true) {
-            //verify if the month has 31 days
             if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
                 dia = prompts("Ingrese el dia de nacimiento: ");
                 dia = Number(dia);
@@ -82,7 +82,6 @@ function birthDateGetter() {
                     console.log("Dia invalido");
                 }
             }
-            //verify if the month has 30 days
             else if (mes == 4 || mes == 6 || mes == 9 || mes == 11) {
                 dia = prompts("Ingrese el dia de nacimiento: ");
                 dia = Number(dia);
@@ -93,7 +92,6 @@ function birthDateGetter() {
                     console.log("Dia invalido");
                 }
             }
-            //verify if the month is february
             else if (mes == 2) {
                 dia = prompts("Ingrese el dia de nacimiento: ");
                 dia = Number(dia);
@@ -126,6 +124,7 @@ function birthDateGetter() {
     return fechaNacimiento;
 }
 exports.birthDateGetter = birthDateGetter;
+//* Funcion para listar errores de manera mas legible
 function errorParser(error) {
     let errorArray = [];
     let errorObject = error.data.data;
@@ -135,11 +134,7 @@ function errorParser(error) {
     return errorArray;
 }
 exports.errorParser = errorParser;
-//function that gets a list object and returns an array of the required propertys
-//there can be many required propertys such as id, name, etc
-//list.items is an array of objects and we may require several properties from each object
-//if for example id and name is required it will be returned as a matrix
-//such as [[id1, name1], [id2, name2], [id3, name3]]
+//* Funcion para listar elementos de una tabla
 function listParser(list, requiredPropertys) {
     let listArray = [];
     for (let i = 0; i < list.items.length; i++) {

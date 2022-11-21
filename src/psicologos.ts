@@ -1,4 +1,3 @@
-import { Record } from "pocketbase";
 import {prompts, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser} from "./utility"
 //Referencia
 /*async function getAllRecords() {
@@ -507,7 +506,6 @@ async function agregarPregunta(id: string){
   console.log("opcional, ingrese enter para omitir");
   let descripcion = prompts("Ingrese la descripcion: ");
   addQuestion.description = descripcion;
-  //add id to addQuestion objecc as test_id wich is an array
   addQuestion.test_id[0] = id;
 
   const result = await client.collection('questions').create(addQuestion);

@@ -116,6 +116,7 @@ function birthDateGetter(): string {
     return fechaNacimiento;
 }
 //* Funcion para listar errores de manera mas legible
+//* Dependiendo del error funciona o no TBD
 function errorParser(error: any): string[] {
     let errorArray: string[] = [];
     let errorObject = error.data.data;
@@ -125,6 +126,7 @@ function errorParser(error: any): string[] {
     return errorArray;
 }
 //* Funcion para listar elementos de una tabla
+//* Util para trabajar con pocketbase y mostrar datos
 function listParser(list: any, requiredPropertys: string[]): any[] {
     let listArray: any[] = [];
     for(let i = 0; i < list.items.length; i++){
