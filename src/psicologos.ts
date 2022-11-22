@@ -1,5 +1,6 @@
-import { Record } from 'pocketbase'
-import { prompts, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser } from './utility'
+import test from 'node:test'
+import { prompts, inquirer, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser } from './utility'
+import {createRecord} from './pbutility'
 // Referencia
 /* async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
@@ -26,7 +27,7 @@ export function menuPsicologo () {
     case '4':
       console.log('Gracias por usar el sistema de encuestas')
       client.authStore.clear()
-      break
+      return;
     default:
       console.log('Opcion invalida')
       menuPsicologo()
@@ -90,7 +91,7 @@ async function agregarUsuario () {
     console.log('3) No-binario')
     console.log('4) Prefiero no responder')
     genero = prompts('Ingrese una opcion: ')
-    if (genero == '1' || genero == '2' || genero == '3' || genero == '4') {
+    if (genero === '1' || genero === '2' || genero === '3' || genero ==='4') {
       genero = selectables[parseInt(genero) - 1]
       break
     } else {
@@ -242,51 +243,39 @@ async function agregarTest () {
   console.log('Ingrese los siguientes datos')
   console.log('Los campos obligatorios son: Nombre, puntaje de corte, puntaje maximo y rango de edad')
   console.log('Campos opcionales: Observaciones')
-  let nombre: string
-  let puntajeCorte: number
-  let puntajeMaximo: number
-  let rangoEdad: string
-  let observaciones: string
+  let data :Test = {} as Test
   while (true) {
-    nombre = prompts('Ingrese el nombre del test: ')
-    if (nombre != '') {
+    data.name = prompts('Ingrese el nombre del test: ')
+    if (data.name !== '') {
       break
     } else {
       console.log('El nombre no puede estar vacio')
     }
   }
-  while (puntajeCorte == undefined) {
-    puntajeCorte = Number(prompts('Ingrese el puntaje de corte: '))
-    if (puntajeCorte == undefined) {
+  while (data.cut_point ===  undefined) {
+    data.cut_point = Number(prompts('Ingrese el puntaje de corte: '))
+    if (data.cut_point == undefined) {
       console.log('El puntaje de corte debe ser un numero')
     }
   }
-  while (puntajeMaximo == undefined) {
-    puntajeMaximo = Number(prompts('Ingrese el puntaje maximo: '))
-    if (puntajeMaximo == undefined) {
+  while (data.max_point === undefined) {
+    data.max_point = Number(prompts('Ingrese el puntaje maximo: '))
+    if (data.max_point === undefined) {
       console.log('El puntaje maximo debe ser un numero')
     }
   }
   while (true) {
-    rangoEdad = prompts('Ingrese el rango de edad: ')
-    // rangoEdad must follow the format "x-y" where x and y are numbers
-    if (rangoEdad != '' && rangoEdad.match(/^[0-9]+-[0-9]+$/)) {
+    data.ageRange = prompts('Ingrese el rango de edad: ')
+    if (data.ageRange !== '' && data.ageRange.match(/^[0-9]+-[0-9]+$/)) {
       break
     } else {
       console.log('El rango de edad no puede estar vacio')
     }
   }
-  observaciones = prompts('Ingrese las observaciones: ')
-  const test = {
-    name: nombre,
-    cut_point: puntajeCorte,
-    max_point: puntajeMaximo,
-    ageRange: rangoEdad,
-    observation: observaciones
-  }
+  data.observation = prompts('Ingrese las observaciones: ')
   let testId
-  try {
-    const record = await client.collection('tests').create(test)
+  try{
+    const record = await client.collection('tests').create(data)
     testId = record.id
     console.log('Test creado exitosamente')
   } catch (error) {
@@ -294,6 +283,9 @@ async function agregarTest () {
     while (errorArray.length > 0) {
       console.log(errorArray.pop())
     }
+    console.log('No se pudo crear el test')
+    administrarTests()
+    return
   }
   console.log('1) Agregar otro test')
   console.log('2) Modificar el test actual')
@@ -322,7 +314,6 @@ async function agregarTest () {
 async function actualizarTest (id?: string) {
   if (id == undefined) {
     console.clear()
-    // ask fo id or to exit
     console.log('ingrese el id del test que desea modificar')
     console.log('o ingrese enter para salir')
     id = prompts('Ingrese el id: ')
@@ -492,7 +483,7 @@ async function menuPreguntas (id?: string) {
   }
 }
 async function agregarPregunta (id: string) {
-  let addQuestion: question
+  let addQuestion: question;
   console.log('Ingrese los datos de la pregunta')
   while (true) {
     const pregunta = prompts('Ingrese la pregunta: ')
@@ -509,6 +500,48 @@ async function agregarPregunta (id: string) {
   addQuestion.description = descripcion
   // add id to addQuestion objecc as test_id wich is an array
   addQuestion.test_id[0] = id
+  try{
+    const res = await client.collection('questions').create(addQuestion);
+    const idPregunta = res.id;
+    console.log('Pregunta agregada exitosamente')
+  }catch(error){
+    const errorArray = errorParser(error)
+    while (errorArray.length > 0) {
+      console.log(errorArray.pop())
+    }
+    console.log('1) Reintentar')
+    console.log('2) Salir')
+    const opt = prompts('Ingrese una opcion: ')
+    switch (opt) {
+      case '1':
+        agregarPregunta(id)
+        break
+      case '2':
+        menuPreguntas(id)
+        break
+      default:
+        console.log('Opcion invalida') 
+        agregarPregunta(id)
+    }
+  }
+  console.log('1)Agregar respuestas')
+  console.log('2)Agregar otra pregunta')
+  console.log('3)Salir')
+  const opt = prompts('Ingrese una opcion: ')
+  switch (opt) {
+    case '1':
+      // agregarRespuestas(idPregunta);
+      break
+    case '2':
+      agregarPregunta(id)
+      break
+    case '3':
+      menuPreguntas(id)
+      break
+    default:
+      console.log('Opcion invalida')
+      agregarPregunta(id)
+  }
 
-  const result = await client.collection('questions').create(addQuestion)
+
 }

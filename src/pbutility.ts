@@ -1,5 +1,5 @@
 import {client, errorParser} from "./utility";
-async function createRecord(collection: string, data: any): Promise<string> {
+async function createRecord(collection: string, data: any) {
     try {
         const res = await client.collection(collection).create(data);
         return res;
@@ -68,3 +68,4 @@ async function getRecords(collection: string, i: number, j: number) {
          }
     }
 }
+export {createRecord, updateRecord, deleteRecord, getRecord, getAllRecords, getRecords};
