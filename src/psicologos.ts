@@ -20,7 +20,7 @@ export function menuPsicologo () {
       // verEncuestasRealizadas();
       break
     case '3':
-      manejarUsuarios()
+      manejarPacientes()
       break
     case '4':
       console.log('Gracias por usar el sistema de encuestas')
@@ -34,27 +34,27 @@ export function menuPsicologo () {
 }
 
 //* *seccion de manejo de usuarios
-function manejarUsuarios () {
-  console.log('1) Ver todos los usuarios')
-  console.log('2) Agregar un usuario')
-  console.log('3) Eliminar un usuario')
-  console.log('4) Salir del menu de usuarios')
+function manejarPacientes () {
+  console.log('1) Ver los primeros 5 pacientes')
+  console.log('2) Agregar un paciente')
+  console.log('3) Actualizar un paciente')
+  console.log('4) Eliminar un paciente')
+  console.log('5) Salir del menu de pacientes')
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
       return fetchPacientes(0,5)
     case '2':
-      agregarUsuario()
-      break
+      return agregarUsuario();
     case '3':
-      // eliminarUsuario();
-      break
+      //return actualizarUsuario();
     case '4':
-      menuPsicologo()
-      break
+      //return eliminarUsuario();
+    case '5':
+      return menuPsicologo();
     default:
       console.log('Opcion invalida')
-      manejarUsuarios()
+      manejarPacientes()
       break
   };
 }
@@ -128,7 +128,7 @@ async function agregarUsuario () {
       console.log(errorArray.pop())
     }
   }
-  return manejarUsuarios()
+  return manejarPacientes()
 }
 async function fetchPacientes(i: number,j: number) {
   const resultList = await client.collection('patients').getList(i,j)
@@ -149,11 +149,11 @@ async function verTodosLosUsuarios (resultList:any) {
          return verTodosLosUsuarios(resultList)
       } else {
         console.log('No hay mas usuarios')
-        manejarUsuarios()
+        manejarPacientes()
       }
       break
     case '2':
-      return manejarUsuarios()
+      return manejarPacientes()
     default:
       console.log('Opcion invalida')
       return verTodosLosUsuarios(resultList)
@@ -185,12 +185,12 @@ function administrarTests () {
   console.log('2) Agregar un test')
   console.log('3) Actualizar un test')
   console.log('4) Eliminar un test')
-  console.log('5) Salir')
+  console.log('5) Menu de preguntas')
+  console.log('6) Salir')
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
-      verTests(1, 5)
-      break
+      return fetchTests(0,5)
     case '2':
       agregarTest()
       break
@@ -201,18 +201,22 @@ function administrarTests () {
       // eliminarTest();
       break
     case '5':
-      menuPsicologo()
-      break
+      return administradorPreguntas(); 
+    case '6':
+      return menuPsicologo();
     default:
       console.log('Opcion invalida')
       administrarTests()
       break
   };
 }
-async function verTests (i: number, j: number) {
+async function fetchTests(i: number,j: number) {
+  const resultList = await client.collection('tests').getList(i,j)
+  return verTests(resultList)
+}
+async function verTests (resultList) {
   console.clear()
   console.log('Cargando los primeros 5 tests')
-  const resultList = await client.collection('tests').getList(i, j)
   const resultMatrix = listParser(resultList, ['id', 'name', 'observation'])
   console.log(table(resultMatrix))
   console.log('1) Ver mas tests')
@@ -221,20 +225,18 @@ async function verTests (i: number, j: number) {
   switch (opcion) {
     case '1':
       if (resultList.page < resultList.totalPages) {
-        verTests(i + 5, j + 5)
-        break
+        resultList.page += 1
+        return verTests(resultList)
       } else {
         console.log('No hay mas tests')
-        administrarTests()
-        break
+        return administrarTests();
       }
     case '2':
       administrarTests()
       break
     default:
       console.log('Opcion invalida')
-      verTests(i, j)
-      break
+      return verTests(resultList)
   };
 }
 async function agregarTest () {
@@ -440,8 +442,7 @@ async function administradorPreguntas (id?: string) {
     const opcion = prompts('Ingrese una opcion: ')
     switch (opcion) {
       case '1':
-        // menuPreguntas();
-        break
+        return menuPreguntas(id)
       case '2':
         administrarTests()
         check = true
@@ -457,6 +458,7 @@ async function menuPreguntas (id?: string) {
   console.log('1) Agregar pregunta')
   console.log('2) Modificar pregunta')
   console.log('3) Eliminar pregunta')
+  console.log('4) Menu de respuestas')
   console.log('4) Salir')
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
@@ -538,6 +540,11 @@ async function agregarPregunta (id: string) {
 
 async function menuRespuesta(idPregunta: string, idTest:string) {
   //* verificar que no se pasen del puntaje maximo
+  console.clear()
+  console.log('1) Agregar respuesta')
+  console.log('2) Modificar respuesta')
+  console.log('3) Eliminar respuesta')
+  console.log('4) Salir')
 }
 function tomar(){
   
