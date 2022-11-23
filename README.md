@@ -9,8 +9,6 @@ un sistema CRUD por consola para los administradores
 
 [Link al informe](https://universidadarturoprat230-my.sharepoint.com/:w:/g/personal/fvirgilio_estudiantesunap_cl/Ef3v6LOrwWBPhS_KgbiwHLMBq8mVK0SEnSri9b31jgvAvw?e=aFVIlV)
 
-## PPT del proyecto
-[Link al ppt](https://universidadarturoprat230-my.sharepoint.com/:p:/g/personal/fvirgilio_estudiantesunap_cl/EYuqWZl5bgtPldMxotVnV3YBJMOzZTbO-5kR6BM70pthlA?e=E9dV3X)
 ## Correr de manera local
 
 Un requisito previo es tener una version de nodejs
