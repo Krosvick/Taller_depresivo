@@ -1,4 +1,4 @@
-import { prompts, inquirer, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser } from './utility'
+import { prompts, inquirer, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser, filterParser } from './utility'
 // Referencia
 /* async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
@@ -173,11 +173,12 @@ interface question {
   'description': string
   'test_id': string[]
 }
-interface respuesta {
+interface answer {
   'points': number
   'content': string
   'observation': string
-  'question_id': string
+  'question_id': string[]
+  'test_id': string[]
 }
 
 function administrarTests () {
@@ -317,12 +318,17 @@ async function actualizarTest (id?: string) {
     console.log('o ingrese enter para salir')
     id = prompts('Ingrese el id: ')
     if (id == '') {
-      administrarTests()
-      return
+      return administrarTests() 
     }
   }
   let check = false
-  const record = await client.collection('tests').getOne(id)
+  let record;
+  try {
+    record = await client.collection('tests').getOne(id)
+  } catch (error) {
+    console.log('No se encontro el test')
+    return actualizarTest()
+  }
   const data: Test = {
     name: record.name,
     cut_point: record.cut_point,
@@ -425,14 +431,22 @@ async function actualizarTest (id?: string) {
   }
 }
 async function administradorPreguntas (id?: string) {
-  if (id == undefined) {
-    console.clear()
-    console.log('ingrese el id del test al que desea agregar preguntas')
-    console.log('o ingrese enter para salir')
-    id = prompts('Ingrese el id: ')
-    if (id == '') {
-      administrarTests()
-      return
+  while(true) {
+    if (id == undefined) {
+      console.clear()
+      console.log('ingrese el id del test al que desea agregar preguntas')
+      console.log('o ingrese enter para salir')
+      id = prompts('Ingrese el id: ')
+      if (id == '') {
+        return administrarTests()
+      }
+    }
+    try{
+      const test = await client.collection('tests').getOne(id)
+      break
+    } catch (error) {
+      console.log('No se encontro el test')
+      continue
     }
   }
   let check = false
@@ -453,13 +467,14 @@ async function administradorPreguntas (id?: string) {
     }
   }
 }
-async function menuPreguntas (id?: string) {
+async function menuPreguntas (idTest?: string) {
   console.clear()
   console.log('1) Agregar pregunta')
   console.log('2) Modificar pregunta')
   console.log('3) Eliminar pregunta')
   console.log('4) Menu de respuestas')
-  console.log('4) Salir')
+  console.log('5) Ver preguntas')
+  console.log('6) Salir')
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
@@ -472,12 +487,20 @@ async function menuPreguntas (id?: string) {
       // eliminarPregunta(id);
       break
     case '4':
-      administrarTests()
-      break
+      return menuRespuesta(idTest);
+    case '5':
+      // return verPreguntas(id);
+    case '6':
+      return administradorPreguntas(idTest)
     default:
       console.log('Opcion invalida')
-      menuPreguntas(id)
+      menuPreguntas(idTest)
   }
+}
+async function fetchPreguntas (idTest: string, i: number, j: number) {
+  const preguntas = await client.collection('questions').getList(i,j,{
+    filter: `test_id = ${idTest}`,})
+  return preguntas
 }
 async function agregarPregunta (id: string) {
   let addQuestion: question;
@@ -514,7 +537,7 @@ async function agregarPregunta (id: string) {
       case '1':
         return agregarPregunta(id)
       case '2':
-        return menuPreguntas(id)
+        return menuPreguntas()
       default:
         console.log('Opcion invalida') 
         return agregarPregunta(id)
@@ -538,14 +561,113 @@ async function agregarPregunta (id: string) {
 
 }
 
-async function menuRespuesta(idPregunta: string, idTest:string) {
+async function menuRespuesta(idTest: string, idPregunta?:string) {
+  while(true){
+    if (idPregunta == undefined) {
+      console.clear()
+      console.log('Ingrese el id de la pregunta a la que desea agregar respuestas')
+      console.log('o ingrese enter para salir')
+      idPregunta = prompts('Ingrese el id: ')
+      if (idPregunta == '') {
+        return menuPreguntas(idTest)
+      }
+    }
+    try{
+      const res = await client.collection('questions').getOne(idPregunta);
+      break
+    } catch(error){
+      console.log( "El id de la pregunta no existe")
+      continue
+    }
+  }
   //* verificar que no se pasen del puntaje maximo
   console.clear()
   console.log('1) Agregar respuesta')
   console.log('2) Modificar respuesta')
   console.log('3) Eliminar respuesta')
+  console.log('4) Ver respuestas')
   console.log('4) Salir')
+  const opcion = prompts('Ingrese una opcion: ')
+  switch (opcion) {
+    case '1':
+      return agregarRespuesta(idPregunta,idTest);
+    case '2':
+      // return modificarRespuesta(idPregunta,idTest);
+    case '3':
+      // return eliminarRespuesta(idPregunta,idTest);
+    case '4':
+      //return verRespuestas(idPregunta,idTest);
+    default:
+      console.log('Opcion invalida')
+      return menuRespuesta(idPregunta,idTest);
+  }
 }
-function tomar(){
-  
+async function agregarRespuesta(idPregunta: string, idTest:string) {
+  //this function will check first if there are answers to the question
+  //if there are answers it will ask if you want to add tge answer to the question
+  //or if you want to add a completely new answer
+  const answerCheck = await client.collection('answers').getFullList(200,{
+    filter: `question_id.id = "${idPregunta}"`,
+  })
+  if(answerCheck.length >0){
+    console.log("1)agregar respuesta ya existente")
+    console.log("2)agregar nueva respuesta")
+    const opt = prompts("Ingrese una opcion: ")
+    switch (opt) {
+      case '1':
+        return agregarRespuestaExistente(idPregunta,idTest, answerCheck);
+      case '2':
+        return agregarNuevaRespuesta(idPregunta,idTest)
+      default:
+        console.log("Opcion invalida")
+        return agregarRespuesta(idPregunta,idTest)
+    }
+  }
+}
+async function agregarRespuestaExistente(idPregunta:string,idTest:string, list:string){
+  console.clear()
+  let res;
+  console.log("las respuestas disponibles son: ")
+  let answerDisplay = filterParser(list, ["content","points","id"])
+  console.log(table(answerDisplay))
+  console.log("Ingrese el id de la respuesta que desea agregar")
+  const idRespuesta = prompts("Ingrese el id: ")
+  try{
+    res = await client.collection('answers').getOne(idRespuesta);
+  }catch(error){
+    console.log("El id de la respuesta no existe")
+    return agregarRespuestaExistente(idPregunta,idTest, list)
+  }
+  let data: answer = {
+    points: res.points,
+    content: res.content,
+    observation: res.observation,
+    question_id: res.question_id,
+    test_id: res.test_id,
+  }
+  for(let i = 0; i < data.question_id.length; i++){
+    if(data.question_id[i] == idPregunta){
+      console.log("La respuesta ya esta agregada a la pregunta")
+      return menuRespuesta(idPregunta,idTest)
+    }
+  }
+  data.question_id.push(idPregunta);
+  try{
+    await client.collection('answers').update(idRespuesta,data);
+    console.log("Respuesta agregada exitosamente")
+  }catch(error){
+    const errorArray = errorParser(error)
+    while (errorArray.length > 0) {
+      console.log(errorArray.pop())
+    }
+    console.log("Ocurrio un error al agregar la respuesta")
+    return agregarRespuestaExistente(idPregunta,idTest, list)
+    
+  }
+  return menuRespuesta(idPregunta,idTest)
+
+}
+async function agregarNuevaRespuesta(idPregunta:string,idTest:string){
+  console.clear()
+  let addAnswer: answer;
 }
