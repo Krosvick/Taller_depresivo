@@ -1,6 +1,4 @@
-import test from 'node:test'
 import { prompts, inquirer, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser } from './utility'
-import {createRecord} from './pbutility'
 // Referencia
 /* async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
@@ -44,7 +42,7 @@ function manejarUsuarios () {
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
-      // verTodosLosUsuarios();
+      verTodosLosUsuarios(0,5);
       break
     case '2':
       agregarUsuario()
@@ -131,12 +129,12 @@ async function agregarUsuario () {
       console.log(errorArray.pop())
     }
   }
-  manejarUsuarios()
+  return manejarUsuarios()
 }
 async function verTodosLosUsuarios (i: number, j: number) {
   console.clear()
   console.log('Cargando los primeros 5 usuarios')
-  const resultList = await client.collection('users').getList(i, j)
+  const resultList = await client.collection('patients').getList(i, j)
   const resultMatrix = listParser(resultList, ['id', 'names', 'email'])
   console.log(table(resultMatrix))
   console.log('1) Ver mas usuarios')
@@ -144,8 +142,8 @@ async function verTodosLosUsuarios (i: number, j: number) {
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
-      if (resultList.length < resultList.totalItems) {
-        verTodosLosUsuarios(i + 5, j + 5)
+      if (resultList.items.length < resultList.totalItems) {
+         return verTodosLosUsuarios(i + 5, j + 5)
       } else {
         console.log('No hay mas usuarios')
         manejarUsuarios()
@@ -284,8 +282,7 @@ async function agregarTest () {
       console.log(errorArray.pop())
     }
     console.log('No se pudo crear el test')
-    administrarTests()
-    return
+    return administrarTests()
   }
   console.log('1) Agregar otro test')
   console.log('2) Modificar el test actual')
@@ -294,8 +291,7 @@ async function agregarTest () {
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
-      agregarTest()
-      break
+      return agregarTest();
     case '2':
       actualizarTest(testId)
       break
@@ -418,9 +414,7 @@ async function actualizarTest (id?: string) {
       case '1':
         continue
       case '2':
-        administrarTests()
-        check = true
-        break
+        return administrarTests()
       default:
         console.log('Opcion invalida')
         continue
@@ -543,5 +537,20 @@ async function agregarPregunta (id: string) {
       agregarPregunta(id)
   }
 
+}
 
+async function menuRespuesta(idPregunta: string, idTest:string) {
+  //* verificar que no se pasen del puntaje maximo
+}
+function tomar(){
+  1)elegir usuario por id
+  2)seleccionar test disponibles -> el codigo calcula la wea segun el rango de edad del test y la fecha de nacimiento del paciente
+  3)del test pedir las preguntas ->pocketbase inferno
+  4)de las preguntas sacar las respuestas ->idem
+  5)mostrar las preguntas y las respuestas ->
+  6)pedirle al aweonao que elija 1
+  7)ir guardando el puntaje
+  8) al final mostrar el puntaje final
+  9) que el csm del psicologo lo diagnostique y punto
+  10)guardar la wea en polls
 }
