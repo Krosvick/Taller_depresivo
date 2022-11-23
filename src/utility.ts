@@ -133,5 +133,16 @@ function listParser (list: any, requiredPropertys: string[]): any[] {
   }
   return listArray
 }
+function filterParser(list: any, requiredPropertys: string[]): any[] {
+  const listArray: any[] = []
+  for (let i = 0; i < list.length; i++) {
+    const itemArray: any[] = []
+    for (let j = 0; j < requiredPropertys.length; j++) {
+      itemArray.push(list[i][requiredPropertys[j]])
+    }
+    listArray.push(itemArray)
+  }
+  return listArray
+}
 
-export { prompts, inquirer, table, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter, errorParser, listParser }
+export { prompts, inquirer, table, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter, errorParser, listParser, filterParser }

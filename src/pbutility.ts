@@ -68,4 +68,26 @@ async function getRecords(collection: string, i: number, j: number) {
          }
     }
 }
-export {createRecord, updateRecord, deleteRecord, getRecord, getAllRecords, getRecords};
+async function getRelations(collection:string, relation:string, filter:string){
+    let res;
+    let array = [];
+    let rel = relation
+    try{
+        res = await client.collection(collection).getFullList(200);
+    } catch(error){
+        return array;
+    }
+    //loop through res.items[i].rel[id's] and save it into an array
+    //rel is the name of the relation and it is a string
+    //return array
+    for(let i = 0; i < res.length; i++){
+        for(let j = 0; j < res[i][rel].length; j++){
+            if(res[i][rel][j] == filter){
+                array.push(res[i]);
+            }
+        }
+    }
+    return array;
+
+}
+export {createRecord, updateRecord, deleteRecord, getRecord, getAllRecords, getRecords, getRelations};
