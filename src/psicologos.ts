@@ -42,8 +42,7 @@ function manejarUsuarios () {
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
-      verTodosLosUsuarios(0,5);
-      break
+      return fetchPacientes(0,5)
     case '2':
       agregarUsuario()
       break
@@ -131,10 +130,13 @@ async function agregarUsuario () {
   }
   return manejarUsuarios()
 }
-async function verTodosLosUsuarios (i: number, j: number) {
+async function fetchPacientes(i: number,j: number) {
+  const resultList = await client.collection('patients').getList(i,j)
+  return verTodosLosUsuarios(resultList)
+}
+async function verTodosLosUsuarios (resultList:any) {
   console.clear()
   console.log('Cargando los primeros 5 usuarios')
-  const resultList = await client.collection('patients').getList(i, j)
   const resultMatrix = listParser(resultList, ['id', 'names', 'email'])
   console.log(table(resultMatrix))
   console.log('1) Ver mas usuarios')
@@ -142,20 +144,19 @@ async function verTodosLosUsuarios (i: number, j: number) {
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
-      if (resultList.items.length < resultList.totalItems) {
-         return verTodosLosUsuarios(i + 5, j + 5)
+      if (resultList.page < resultList.totalPages) {
+        resultList.page += 1
+         return verTodosLosUsuarios(resultList)
       } else {
         console.log('No hay mas usuarios')
         manejarUsuarios()
       }
       break
     case '2':
-      manejarUsuarios()
-      break
+      return manejarUsuarios()
     default:
       console.log('Opcion invalida')
-      verTodosLosUsuarios(i, j)
-      break
+      return verTodosLosUsuarios(resultList)
   };
 }
 
@@ -219,7 +220,7 @@ async function verTests (i: number, j: number) {
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
-      if (resultList.perPage < resultList.totalItems) {
+      if (resultList.page < resultList.totalPages) {
         verTests(i + 5, j + 5)
         break
       } else {
@@ -494,9 +495,10 @@ async function agregarPregunta (id: string) {
   addQuestion.description = descripcion
   // add id to addQuestion objecc as test_id wich is an array
   addQuestion.test_id[0] = id
+  let idPregunta;
   try{
     const res = await client.collection('questions').create(addQuestion);
-    const idPregunta = res.id;
+    idPregunta = res.id;
     console.log('Pregunta agregada exitosamente')
   }catch(error){
     const errorArray = errorParser(error)
@@ -508,14 +510,12 @@ async function agregarPregunta (id: string) {
     const opt = prompts('Ingrese una opcion: ')
     switch (opt) {
       case '1':
-        agregarPregunta(id)
-        break
+        return agregarPregunta(id)
       case '2':
-        menuPreguntas(id)
-        break
+        return menuPreguntas(id)
       default:
         console.log('Opcion invalida') 
-        agregarPregunta(id)
+        return agregarPregunta(id)
     }
   }
   console.log('1)Agregar respuestas')
@@ -524,17 +524,14 @@ async function agregarPregunta (id: string) {
   const opt = prompts('Ingrese una opcion: ')
   switch (opt) {
     case '1':
-      // agregarRespuestas(idPregunta);
-      break
+      return menuRespuesta(idPregunta,id);
     case '2':
-      agregarPregunta(id)
-      break
+      return agregarPregunta(id)
     case '3':
-      menuPreguntas(id)
-      break
+      return menuPreguntas(id)
     default:
       console.log('Opcion invalida')
-      agregarPregunta(id)
+      return menuPreguntas(id)
   }
 
 }
@@ -543,14 +540,5 @@ async function menuRespuesta(idPregunta: string, idTest:string) {
   //* verificar que no se pasen del puntaje maximo
 }
 function tomar(){
-  1)elegir usuario por id
-  2)seleccionar test disponibles -> el codigo calcula la wea segun el rango de edad del test y la fecha de nacimiento del paciente
-  3)del test pedir las preguntas ->pocketbase inferno
-  4)de las preguntas sacar las respuestas ->idem
-  5)mostrar las preguntas y las respuestas ->
-  6)pedirle al aweonao que elija 1
-  7)ir guardando el puntaje
-  8) al final mostrar el puntaje final
-  9) que el csm del psicologo lo diagnostique y punto
-  10)guardar la wea en polls
+  
 }

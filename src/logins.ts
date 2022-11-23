@@ -25,7 +25,6 @@ export async function loginPsicologo(){
     menuPsicologo();
   }catch(error){
     console.log("Correo o contraseña invalidos");
-    loginPsicologo();
+    return loginPsicologo();
   }
-  return;
 }
