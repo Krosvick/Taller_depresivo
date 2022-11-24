@@ -22,7 +22,7 @@ export async function loginPsicologo(){
   try{
     const res = await client.collection("psychologists").authWithPassword(email, message.password);
     console.log("Bienvenido" + " "+ res.record.names);
-    return menuPsicologo(res.record.id);
+    return menuPsicologo();
   }catch(error){
     console.log("Correo o contraseña invalidos");
     return loginPsicologo();

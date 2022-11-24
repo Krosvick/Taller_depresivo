@@ -1,12 +1,26 @@
-import { prompts, inquirer, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser, filterParser } from './utility'
+import { prompts, inquirer, table, validateEmail, client, birthDateGetter, calculateDv, usernameCreator, validateRun, errorParser, listParser, filterParser, calculateAge} from './utility'
 // Referencia
 /* async function getAllRecords() {
   const adminData = await client.admins.authViaEmail("email@gmail.com", "password");
   const records = await client.records.getOne("preguntas", "hdtljd8anagvn6e" );
   console.log(records.contenido);
 } */
+//client.authStore.baseModel.id
+interface patient {
+  names : string,
+  email : string,
+  lastName : string,
+  secondLastName : string,
+  run : number,
+  dv : number,
+  gender : string,
+  birthday : string,
+  telephone : string,
+  observation : string,
+  psychologists_id : string,
+}
 
-export function menuPsicologo (idPsicologo?: string) {
+export function menuPsicologo () {
   console.log('1) Administrar tests')
   console.log('2) ver encuestas realizadas')
   console.log('3) Manejar usuarios')
@@ -19,7 +33,7 @@ export function menuPsicologo (idPsicologo?: string) {
       // verEncuestasRealizadas();
       break
     case '3':
-      return manejarPacientes(idPsicologo)
+      return manejarPacientes()
     case '4':
       console.log('Gracias por usar el sistema de encuestas')
       client.authStore.clear()
@@ -31,7 +45,7 @@ export function menuPsicologo (idPsicologo?: string) {
 }
 
 //* *seccion de manejo de usuarios
-function manejarPacientes (idPsicologo?: string) {
+function manejarPacientes () {
   console.log('1) Ver los primeros 5 pacientes')
   console.log('2) Agregar un paciente')
   console.log('3) Actualizar un paciente')
@@ -45,11 +59,11 @@ function manejarPacientes (idPsicologo?: string) {
     case '2':
       return agregarUsuario();
     case '3':
-      //return actualizarUsuario();
+      return actualizarUsuario();
     case '4':
-      //return eliminarUsuario();
+      return eliminarUsuario();
     case '5':
-      return encuestarUsuario(idPsicologo);
+      return encuestarUsuario();
     case '6':
       return menuPsicologo();
     default:
@@ -57,18 +71,129 @@ function manejarPacientes (idPsicologo?: string) {
       return manejarPacientes()
   };
 }
-async function encuestarUsuario(idPsicologo?: string) {
+async function actualizarUsuario(){
+  console.clear()
+  let check = false;
+  console.log('Ingrese el id del usuario a actualizar')
+  const res = await client.collection('patients').getFullList(200,{
+    filter: `psychologists_id = "${client.authStore.baseModel.id}"`, 
+  })
+  const resultMatrix = filterParser(res, ['id', 'names', 'email'])
+  console.log(table(resultMatrix))
+  const id = prompts('Ingrese el id: ')
+  const record = await client.collection('patients').getOne(id)
+  const patient: patient = {
+    names: record.names,
+    email: record.email,
+    lastName: record.lastName,
+    secondLastName: record.secondLastName,
+    run: record.run,
+    dv: record.dv,
+    gender: record.gender,
+    birthday: record.birthday,
+    telephone: record.telephone,
+    observation: record.observation,
+    psychologists_id: record.psychologists_id
+  }
+  while(!check){
+    console.clear()
+    console.log('1) Nombre')
+    console.log('2) Apellido')
+    console.log('3) Segundo apellido')
+    console.log('4) Rut')
+    console.log('5) Genero')
+    console.log('6) Fecha de nacimiento')
+    console.log('7) Telefono')
+    console.log('8) Observacion')
+    console.log('9) Salir')
+    const opcion = prompts('Ingrese una opcion: ')
+    switch (opcion) {
+      case '1':
+        patient.names = prompts('Ingrese el nombre: ')
+        break;
+      case '2':
+        patient.lastName = prompts('Ingrese el apellido: ')
+        break;
+      case '3':
+        patient.secondLastName = prompts('Ingrese el segundo apellido: ')
+        break;
+      case '4':
+        patient.run = Number(prompts('Ingrese el rut: '))
+        patient.dv = calculateDv(patient.run)
+        break;
+      case '5':
+        const selectables = ['Masculino', 'Femenino', 'No-binario', 'Prefiero no responder']
+        while(true){
+          console.log("Ingrese el genero")
+          console.log("1) Masculino")
+          console.log("2) Femenino")
+          console.log("3) No-binario")
+          console.log("4) Prefiero no responder")
+          const opcion = prompts('Ingrese una opcion: ')
+          if(opcion == '1'||opcion == '2'||opcion == '3'||opcion == '4'){
+            patient.gender = selectables[Number(opcion)-1]
+            break;
+          }
+          else{
+            console.log('Opcion invalida')
+          }
+        }
+        break;
+      case '6':
+        patient.birthday = birthDateGetter()
+        break;
+      case '7':
+        patient.telephone = prompts('Ingrese el telefono: ')
+        break;
+      case '8':
+        patient.observation = prompts('Ingrese la observacion: ')
+        break;
+      case '9':
+        check = true;
+        break;
+    }
+  }
+  try{
+    const res = await client.collection('patients').update(id, patient)
+    console.table(patient)
+    console.log('Usuario actualizado')
+  } catch (error) {
+    console.log(error)
+  }
+  return manejarPacientes()
+}
+async function eliminarUsuario(){
+  console.clear()
+  console.log('Ingrese el id del usuario a eliminar')
+  const res = await client.collection('patients').getFullList(200,{
+    filter: `psychologists_id = "${client.authStore.baseModel.id}"`, 
+  })
+  const resultMatrix = filterParser(res, ['id', 'names', 'email'])
+  console.log(table(resultMatrix))
+  const id = prompts('Ingrese el id: ')
+  try{
+    const res = await client.collection('patients').delete(id)
+    console.log('Usuario eliminado')
+  } catch (error) {
+    console.log(error)
+  }
+  return manejarPacientes()
+}
+async function encuestarUsuario() {
+  let id;
+  let fechaNA;
   console.clear()
   console.log('Ingrese el id del usuario a encuestar')
   const res = await client.collection('patients').getFullList(200,{
-    filter: `psychologists_id = "${idPsicologo}"`, 
+    filter: `psychologists_id = "${client.authStore.baseModel.id}"`, 
   })
   const resultMatrix = filterParser(res, ['id', 'names', 'email'])
   console.log(table(resultMatrix))
   while (true) {
-    const id = prompts('Ingrese el id: ')
+    id = prompts('Ingrese el id: ')
     try {
       const record = await client.collection('patients').getOne(id)
+      fechaNA = record.birthday
       console.log("Usuario:" + record.names)
       break
 
@@ -77,6 +202,7 @@ async function encuestarUsuario(idPsicologo?: string) {
       return manejarPacientes();
     }
   }
+  let age = calculateAge(fechaNA)
   let tests;
   try {
     tests = await client.collection('tests').getFullList(200)
@@ -100,13 +226,52 @@ async function encuestarUsuario(idPsicologo?: string) {
     return manejarPacientes();
     }
   console.log("Test:" + testElegido.name)
-  const preguntasTestMatrix = filterParser(preguntasTest, ['id', 'question'])
-  console.log(table(preguntasTestMatrix))
+  const preguntasTestMatrix = filterParser(preguntasTest, ['id', 'content'])
+  let puntajeObtenido = await rondaPreguntas(preguntasTestMatrix)
+  console.log("Puntaje obtenido: " + puntajeObtenido)
+  console.log("Puntaje maximo: " + testElegido.max_point)
+  console.log("Puntaje de corte: " + testElegido.cut_point)
+  console.log("Ingrese una observacion o presione enter para continuar")
+  const observacion = prompts('Observacion: ')
+  console.log("Guardando el registro...")
+  const data = {
+    patients_id: id,
+    tests_id: [testId],
+    result: puntajeObtenido,
+    observation: observacion,
+  }
 
-
+  const record = await client.collection('polls').create(data)
+  console.log("Registro guardado")
+  return manejarPacientes();
 
 }
-
+async function rondaPreguntas(preguntasTestMatrix:any) {
+  let puntajeObtenido = 0;
+  for (let i = 0; i < preguntasTestMatrix.length; i++) {
+    const pregunta = preguntasTestMatrix[i];
+    const respuestas = await client.collection('answers').getFullList(200,{
+      filter: `question_id.id = "${pregunta[0]}"`,
+    })
+    const respuestasMatrix = filterParser(respuestas, ['id', 'content',"points"])
+    console.log(pregunta[1])
+    for (let i = 0; i < respuestasMatrix.length; i++) {
+      const respuesta = respuestasMatrix[i];
+      console.log(`${i+1}) ${respuesta[1]}`)
+    }
+    while (true) {
+      const respuestaElegida = prompts('Ingrese el numero de la respuesta: ')
+      if (respuestaElegida > respuestasMatrix.length) {
+        console.log('Opcion invalida')
+        continue
+      }
+      const respuesta = respuestasMatrix[respuestaElegida-1]
+      puntajeObtenido += respuesta[2]
+      break
+    }
+  }
+    return puntajeObtenido;
+}
 async function agregarUsuario () {
   console.clear()
   console.log('Para ingresar un usuario se requiere de los siguientes campos')

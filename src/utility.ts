@@ -144,5 +144,10 @@ function filterParser(list: any, requiredPropertys: string[]): any[] {
   }
   return listArray
 }
-
-export { prompts, inquirer, table, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter, errorParser, listParser, filterParser }
+function calculateAge(utc: string): number {
+  const date = new Date(utc)
+  const ageDifMs = Date.now() - date.getTime()
+  const ageDate = new Date(ageDifMs)
+  return Math.abs(ageDate.getUTCFullYear() - 1970)
+}
+export { prompts, inquirer, table, client, PocketBase, validateEmail, usernameCreator, validateRun, calculateDv, birthDateGetter, errorParser, listParser, filterParser, calculateAge }
