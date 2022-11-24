@@ -133,7 +133,7 @@ function listParser (list: any, requiredPropertys: string[]): any[] {
   }
   return listArray
 }
-function filterParser(list: any, requiredPropertys: string[]): any[] {
+function filterParser (list: any, requiredPropertys: string[]): any[] {
   const listArray: any[] = []
   for (let i = 0; i < list.length; i++) {
     const itemArray: any[] = []
@@ -144,7 +144,7 @@ function filterParser(list: any, requiredPropertys: string[]): any[] {
   }
   return listArray
 }
-function calculateAge(utc: string): number {
+function calculateAge (utc: string): number {
   const date = new Date(utc)
   const ageDifMs = Date.now() - date.getTime()
   const ageDate = new Date(ageDifMs)
