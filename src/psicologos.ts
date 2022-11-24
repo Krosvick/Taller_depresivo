@@ -178,7 +178,7 @@ interface answer {
   'content': string
   'observation': string
   'question_id': string[]
-  'test_id': string[]
+  'test_id': string
 }
 
 function administrarTests () {
@@ -603,9 +603,6 @@ async function menuRespuesta(idTest: string, idPregunta?:string) {
   }
 }
 async function agregarRespuesta(idPregunta: string, idTest:string) {
-  //this function will check first if there are answers to the question
-  //if there are answers it will ask if you want to add tge answer to the question
-  //or if you want to add a completely new answer
   const answerCheck = await client.collection('answers').getFullList(200,{
     filter: `question_id.id = "${idPregunta}"`,
   })
@@ -670,4 +667,40 @@ async function agregarRespuestaExistente(idPregunta:string,idTest:string, list:s
 async function agregarNuevaRespuesta(idPregunta:string,idTest:string){
   console.clear()
   let addAnswer: answer;
+  while(true){
+    console.log("Ingrese el contenido de la respuesta")
+    const content = prompts("Ingrese el contenido: ")
+    if(content == ""){
+      console.log("El contenido no puede estar vacio")
+      continue
+    }
+    addAnswer.content = content;
+    break
+  }
+  while(true){
+    console.log("Ingrese el puntaje de la respuesta")
+    const points = prompts("Ingrese el puntaje: ")
+    if(points == ""){
+      console.log("El puntaje no puede estar vacio")
+      continue
+    }
+    addAnswer.points = Number(points);
+    break
+  }
+  let observation = prompts("Ingrese una observacion: ")
+  addAnswer.observation = observation;
+  addAnswer.question_id = [idPregunta];
+  addAnswer.test_id = idTest;
+  try{
+    await client.collection('answers').create(addAnswer);
+    console.log("Respuesta agregada exitosamente")
+  }catch(error){
+    const errorArray = errorParser(error)
+    while (errorArray.length > 0) {
+      console.log(errorArray.pop())
+    }
+    console.log("Ocurrio un error al agregar la respuesta")
+    return agregarNuevaRespuesta(idPregunta,idTest)
+  }
+  return menuRespuesta(idPregunta,idTest)
 }
