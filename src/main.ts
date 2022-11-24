@@ -15,8 +15,7 @@ function init(){
       break;
     default:
       console.log("Opcion invalida");
-      init();
-      break;
+      return init();
   }
 
 }

@@ -6,7 +6,7 @@ import { prompts, inquirer, table, validateEmail, client, birthDateGetter, calcu
   console.log(records.contenido);
 } */
 
-export function menuPsicologo () {
+export function menuPsicologo (idPsicologo?: string) {
   console.log('1) Administrar tests')
   console.log('2) ver encuestas realizadas')
   console.log('3) Manejar usuarios')
@@ -14,32 +14,30 @@ export function menuPsicologo () {
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
-      administrarTests()
-      break
+      return administrarTests()
     case '2':
       // verEncuestasRealizadas();
       break
     case '3':
-      manejarPacientes()
-      break
+      return manejarPacientes(idPsicologo)
     case '4':
       console.log('Gracias por usar el sistema de encuestas')
       client.authStore.clear()
       return;
     default:
       console.log('Opcion invalida')
-      menuPsicologo()
-      break
+      return menuPsicologo()
   };
 }
 
 //* *seccion de manejo de usuarios
-function manejarPacientes () {
+function manejarPacientes (idPsicologo?: string) {
   console.log('1) Ver los primeros 5 pacientes')
   console.log('2) Agregar un paciente')
   console.log('3) Actualizar un paciente')
   console.log('4) Eliminar un paciente')
-  console.log('5) Salir del menu de pacientes')
+  console.log('5) Encuestar a un paciente')
+  console.log('6) Salir del menu de pacientes')
   const opcion = prompts('Ingrese una opcion: ')
   switch (opcion) {
     case '1':
@@ -51,12 +49,62 @@ function manejarPacientes () {
     case '4':
       //return eliminarUsuario();
     case '5':
+      return encuestarUsuario(idPsicologo);
+    case '6':
       return menuPsicologo();
     default:
       console.log('Opcion invalida')
-      manejarPacientes()
-      break
+      return manejarPacientes()
   };
+}
+async function encuestarUsuario(idPsicologo?: string) {
+  console.clear()
+  console.log('Ingrese el id del usuario a encuestar')
+  const res = await client.collection('patients').getFullList(200,{
+    filter: `psychologists_id = "${idPsicologo}"`, 
+  })
+  const resultMatrix = filterParser(res, ['id', 'names', 'email'])
+  console.log(table(resultMatrix))
+  while (true) {
+    const id = prompts('Ingrese el id: ')
+    try {
+      const record = await client.collection('patients').getOne(id)
+      console.log("Usuario:" + record.names)
+      break
+
+    } catch (error) {
+      console.log('Id invalido')
+      return manejarPacientes();
+    }
+  }
+  let tests;
+  try {
+    tests = await client.collection('tests').getFullList(200)
+  } catch (error) {
+    console.log('No hay tests disponibles')
+    return manejarPacientes();
+  }
+  const testMatrix = filterParser(tests, ['id', 'name'])
+  console.log(table(testMatrix))
+  const testId = prompts('Ingrese el id del test: ')
+  let testElegido;
+  let preguntasTest;
+  try {
+    testElegido = await client.collection('tests').getOne(testId)
+    preguntasTest = await client.collection('questions').getFullList(200,{
+      filter: `tests_id.id = "${testId}"`,
+    })
+
+  }catch (error) {
+    console.log('Id invalido')
+    return manejarPacientes();
+    }
+  console.log("Test:" + testElegido.name)
+  const preguntasTestMatrix = filterParser(preguntasTest, ['id', 'question'])
+  console.log(table(preguntasTestMatrix))
+
+
+
 }
 
 async function agregarUsuario () {
@@ -149,7 +197,7 @@ async function verTodosLosUsuarios (resultList:any) {
          return verTodosLosUsuarios(resultList)
       } else {
         console.log('No hay mas usuarios')
-        manejarPacientes()
+        return manejarPacientes()
       }
       break
     case '2':
@@ -207,8 +255,7 @@ function administrarTests () {
       return menuPsicologo();
     default:
       console.log('Opcion invalida')
-      administrarTests()
-      break
+      return administrarTests()
   };
 }
 async function fetchTests(i: number,j: number) {
@@ -233,8 +280,7 @@ async function verTests (resultList) {
         return administrarTests();
       }
     case '2':
-      administrarTests()
-      break
+      return administrarTests();
     default:
       console.log('Opcion invalida')
       return verTests(resultList)
@@ -297,18 +343,15 @@ async function agregarTest () {
     case '1':
       return agregarTest();
     case '2':
-      actualizarTest(testId)
-      break
+      return actualizarTest(testId)
     case '3':
       // agregarPreguntas();
       break
     case '4':
-      administrarTests()
-      break
+      return administrarTests();
     default:
       console.log('Opcion invalida')
-      agregarTest()
-      break
+      return agregarTest();
   }
 }
 async function actualizarTest (id?: string) {
@@ -446,6 +489,7 @@ async function administradorPreguntas (id?: string) {
       break
     } catch (error) {
       console.log('No se encontro el test')
+      id = undefined
       continue
     }
   }
@@ -491,7 +535,7 @@ async function menuPreguntas (idTest?: string) {
     case '5':
       // return verPreguntas(id);
     case '6':
-      return administradorPreguntas(idTest)
+      return administrarTests();
     default:
       console.log('Opcion invalida')
       menuPreguntas(idTest)
@@ -577,7 +621,8 @@ async function menuRespuesta(idTest: string, idPregunta?:string) {
       break
     } catch(error){
       console.log( "El id de la pregunta no existe")
-      continue
+      idPregunta = undefined
+      return menuRespuesta(idTest)
     }
   }
   //* verificar que no se pasen del puntaje maximo
@@ -604,7 +649,7 @@ async function menuRespuesta(idTest: string, idPregunta?:string) {
 }
 async function agregarRespuesta(idPregunta: string, idTest:string) {
   const answerCheck = await client.collection('answers').getFullList(200,{
-    filter: `question_id.id = "${idPregunta}"`,
+    filter: `test_id.id = "${idTest}"`,
   })
   if(answerCheck.length >0){
     console.log("1)agregar respuesta ya existente")
@@ -645,7 +690,7 @@ async function agregarRespuestaExistente(idPregunta:string,idTest:string, list:s
   for(let i = 0; i < data.question_id.length; i++){
     if(data.question_id[i] == idPregunta){
       console.log("La respuesta ya esta agregada a la pregunta")
-      return menuRespuesta(idPregunta,idTest)
+      return menuRespuesta(idTest)
     }
   }
   data.question_id.push(idPregunta);
@@ -666,7 +711,7 @@ async function agregarRespuestaExistente(idPregunta:string,idTest:string, list:s
 }
 async function agregarNuevaRespuesta(idPregunta:string,idTest:string){
   console.clear()
-  let addAnswer: answer;
+  let addAnswer: answer = {} as answer;
   while(true){
     console.log("Ingrese el contenido de la respuesta")
     const content = prompts("Ingrese el contenido: ")
